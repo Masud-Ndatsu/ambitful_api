@@ -1,63 +1,37 @@
-const { ESLint } = require("eslint");
-const tsParser = require("@typescript-eslint/parser");
-const tsPlugin = require("@typescript-eslint/eslint-plugin");
+import js from "@eslint/js";
+import globals from "globals";
+import tseslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
 
-module.exports = [
+export default defineConfig([
   {
-    files: ["**/*.ts"],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        ecmaVersion: 2022,
-        sourceType: "module",
-        project: "./tsconfig.json",
-      },
-    },
-    plugins: {
-      "@typescript-eslint": tsPlugin,
-    },
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
+    plugins: { js },
+    extends: ["js/recommended"],
+    languageOptions: { globals: globals.node },
+  },
+  tseslint.configs.recommended,
+  {
     rules: {
-      ...tsPlugin.configs.recommended.rules,
-      ...tsPlugin.configs["recommended-requiring-type-checking"].rules,
-      
-      // Custom rules
-      "@typescript-eslint/no-unused-vars": ["error", { 
-        "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_" 
-      }],
       "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/explicit-module-boundary-types": "off",
-      "@typescript-eslint/no-non-null-assertion": "warn",
-      "@typescript-eslint/prefer-const": "error",
-      "@typescript-eslint/no-var-requires": "error",
-      
-      // General rules
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
       "no-console": "warn",
       "prefer-const": "error",
-      "no-var": "error",
-      "eqeqeq": ["error", "always"],
-      "curly": ["error", "all"],
-    },
-  },
-  {
-    files: ["scripts/**/*.js"],
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: "script",
-    },
-    rules: {
-      "no-console": "off",
+      quotes: ["error", "single"],
+      semi: ["error", "always"],
     },
   },
   {
     ignores: [
-      "node_modules/**",
-      "dist/**",
-      "docs/**",
-      "src/generated/**",
-      "*.config.js",
-      "scripts/**",
+      "node_modules",
+      "dist",
+      "build",
+      "coverage",
+      "prisma/generated",
+      "src/generated/prisma/**",
     ],
   },
-];
+]);
