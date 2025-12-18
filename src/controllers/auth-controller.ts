@@ -1,43 +1,58 @@
-import { Request, Response } from "express";
-import { authService } from "../services/auth-service";
-import { sendSuccess } from "../utils/send-response";
-import catchError from "../utils/catch-error";
-import { registerSchema, loginSchema } from "../schemas/auth";
+import { NextFunction, Request, Response } from 'express';
+import { authService } from '../services/auth-service';
+import { sendSuccess } from '../utils/send-response';
+import { registerSchema, loginSchema } from '../schemas/auth';
 
 class AuthController {
-  register = catchError(async (req: Request, res: Response) => {
-    const validatedData = registerSchema.parse(req.body);
+  register = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const validatedData = registerSchema.parse(req.body);
 
-    const result = await authService.register(validatedData);
+      const result = await authService.register(validatedData);
 
-    return sendSuccess(res, result, "User registered successfully", 201);
-  });
-
-  login = catchError(async (req: Request, res: Response) => {
-    const validatedData = loginSchema.parse(req.body);
-
-    const result = await authService.login(validatedData);
-
-    return sendSuccess(res, result, "Login successful");
-  });
-
-  me = catchError(async (req: Request, res: Response) => {
-    const userId = req.user?.id;
-
-    if (!userId) {
-      return sendSuccess(res, null, "No user found");
+      return sendSuccess(res, result, 'User registered successfully', 201);
+    } catch (error) {
+      next(error);
     }
+  };
 
-    const user = await authService.getUserById(userId);
+  login = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const validatedData = loginSchema.parse(req.body);
 
-    return sendSuccess(res, user, "User profile retrieved successfully");
-  });
+      const result = await authService.login(validatedData);
 
-  logout = catchError(async (req: Request, res: Response) => {
-    // Since we're using stateless JWT tokens, logout is handled client-side
-    // by removing the token from storage
-    return sendSuccess(res, null, "Logout successful");
-  });
+      return sendSuccess(res, result, 'Login successful');
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  me = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user?.id;
+
+      if (!userId) {
+        return sendSuccess(res, null, 'No user found');
+      }
+
+      const user = await authService.getUserById(userId);
+
+      return sendSuccess(res, user, 'User profile retrieved successfully');
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  logout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      // Since we're using stateless JWT tokens, logout is handled client-side
+      // by removing the token from storage
+      return sendSuccess(res, null, 'Logout successful');
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export const authController = new AuthController();

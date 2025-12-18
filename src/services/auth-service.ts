@@ -1,14 +1,14 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-import { config } from "../config/envars";
-import { prisma } from "../config/database";
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { config } from '../config/envars';
+import { prisma } from '../config/database';
 import {
   UnauthorizedException,
   ConflictException,
   NotFoundException,
-} from "../utils/http-exception";
-import logger from "../config/logger";
-import { RegisterData, LoginCredentials, AuthTokens } from "../schemas/auth";
+} from '../utils/http-exception';
+import logger from '../config/logger';
+import { RegisterData, LoginCredentials, AuthTokens } from '../schemas/auth';
 
 class AuthService {
   private readonly saltRounds = 12;
@@ -23,7 +23,7 @@ class AuthService {
     });
 
     if (existingUser) {
-      throw new ConflictException("User with this email already exists");
+      throw new ConflictException('User with this email already exists');
     }
 
     const hashedPassword = await bcrypt.hash(password, this.saltRounds);
@@ -45,7 +45,7 @@ class AuthService {
 
     const accessToken = this.generateAccessToken(user.id);
 
-    logger.info("User registered successfully", {
+    logger.info('User registered successfully', {
       userId: user.id,
       email: user.email,
     });
@@ -71,18 +71,18 @@ class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException("Invalid credentials");
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException("Invalid credentials");
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     const accessToken = this.generateAccessToken(user.id);
 
-    logger.info("User logged in successfully", {
+    logger.info('User logged in successfully', {
       userId: user.id,
       email: user.email,
     });
@@ -119,7 +119,7 @@ class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException("User not found");
+      throw new NotFoundException('User not found');
     }
 
     return user;
@@ -133,7 +133,7 @@ class AuthService {
   private generateAccessToken(userId: string): string {
     const secret = config.JWT_SECRET;
     return jwt.sign({ userId }, secret, {
-      expiresIn: "7d",
+      expiresIn: '7d',
     });
   }
 

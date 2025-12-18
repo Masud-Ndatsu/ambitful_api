@@ -1,5 +1,5 @@
-import { Response } from "express";
-import { RESPONSE_CODE } from "./http-exception";
+import { Response } from 'express';
+import { RESPONSE_CODE } from './http-exception';
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -13,7 +13,7 @@ export interface ApiResponse<T = any> {
 export function sendSuccess<T = any>(
   res: Response,
   data: T,
-  message: string = "Success",
+  message: string = 'Success',
   status = 200
 ): Response<ApiResponse<T>> {
   return res.status(status).json({
@@ -21,7 +21,7 @@ export function sendSuccess<T = any>(
     message,
     data,
     timestamp: new Date().toISOString(),
-    requestId: res.locals.requestId || "unknown",
+    requestId: res.locals.requestId || 'unknown',
   });
 }
 
@@ -36,6 +36,6 @@ export function sendError(
     message,
     code,
     timestamp: new Date().toISOString(),
-    requestId: res.locals.requestId || "unknown",
+    requestId: res.locals.requestId || 'unknown',
   });
 }

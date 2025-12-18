@@ -1,5 +1,5 @@
-import winston from "winston";
-import { config } from "./envars";
+import winston from 'winston';
+import { config } from './envars';
 
 // Define log levels
 const levels = {
@@ -12,11 +12,11 @@ const levels = {
 
 // Define log colors
 const colors = {
-  error: "red",
-  warn: "yellow",
-  info: "green",
-  http: "magenta",
-  debug: "white",
+  error: 'red',
+  warn: 'yellow',
+  info: 'green',
+  http: 'magenta',
+  debug: 'white',
 };
 
 // Add colors to winston
@@ -24,7 +24,7 @@ winston.addColors(colors);
 
 // Define log format
 const format = winston.format.combine(
-  winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
+  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
   winston.format.colorize({ all: true }),
   winston.format.printf(
     (info: any) => `${info.timestamp} ${info.level}: ${info.message}`
@@ -43,8 +43,8 @@ const transports = [
 
   // File transport for errors
   new winston.transports.File({
-    filename: "logs/error.log",
-    level: "error",
+    filename: 'logs/error.log',
+    level: 'error',
     format: winston.format.combine(
       winston.format.uncolorize(),
       winston.format.json()
@@ -53,7 +53,7 @@ const transports = [
 
   // File transport for all logs
   new winston.transports.File({
-    filename: "logs/combined.log",
+    filename: 'logs/combined.log',
     format: winston.format.combine(
       winston.format.uncolorize(),
       winston.format.json()
@@ -63,7 +63,7 @@ const transports = [
 
 // Create the logger instance
 const logger = winston.createLogger({
-  level: config.NODE_ENV === "development" ? "debug" : "warn",
+  level: config.NODE_ENV === 'development' ? 'debug' : 'warn',
   levels,
   format,
   transports,

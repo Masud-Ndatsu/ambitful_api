@@ -1,9 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import { authService } from "../services/auth-service";
-import { sendError } from "../utils/send-response";
-import { UnauthorizedException } from "../utils/http-exception";
-import { prisma } from "../config/database";
-import logger from "../config/logger";
+import { Request, Response, NextFunction } from 'express';
+import { authService } from '../services/auth-service';
+import { sendError } from '../utils/send-response';
+import { prisma } from '../config/database';
+import logger from '../config/logger';
 
 export const authenticate = async (
   req: Request,
@@ -13,8 +12,8 @@ export const authenticate = async (
   try {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return sendError(res, "Access token is required", 401) as any;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return sendError(res, 'Access token is required', 401) as any;
     }
 
     const token = authHeader.substring(7);
@@ -32,7 +31,7 @@ export const authenticate = async (
     });
 
     if (!user) {
-      return sendError(res, "User no longer exists", 401) as any;
+      return sendError(res, 'User no longer exists', 401) as any;
     }
 
     req.user = {
@@ -44,7 +43,7 @@ export const authenticate = async (
 
     next();
   } catch (error) {
-    logger.error("Authentication error:", error);
+    logger.error('Authentication error:', error);
     throw error;
   }
 };
@@ -57,7 +56,7 @@ export const optionalAuth = async (
   try {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return next();
     }
 
@@ -85,12 +84,12 @@ export const optionalAuth = async (
         };
       }
     } catch (error) {
-      logger.warn("Optional auth failed:", error);
+      logger.warn('Optional auth failed:', error);
     }
 
     next();
   } catch (error) {
-    logger.error("Optional authentication error:", error);
+    logger.error('Optional authentication error:', error);
     next();
   }
 };
