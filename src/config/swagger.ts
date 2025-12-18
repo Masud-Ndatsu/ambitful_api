@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 
 // Load specs from pre-generated openapi.json file
-const openApiPath = path.resolve(__dirname, "../../docs/openapi.json");
+const openApiPath = path.resolve(process.cwd(), "docs/openapi.json");
 
 const loadedSpecs = JSON.parse(fs.readFileSync(openApiPath, "utf-8"));
 
