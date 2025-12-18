@@ -8,28 +8,7 @@ import {
   NotFoundException,
 } from "../utils/http-exception";
 import logger from "../config/logger";
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface RegisterData {
-  email: string;
-  password: string;
-  name: string;
-  phone?: string;
-}
-
-export interface AuthTokens {
-  accessToken: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    isEmailVerified: boolean;
-  };
-}
+import { RegisterData, LoginCredentials, AuthTokens } from "../schemas/auth";
 
 class AuthService {
   private readonly saltRounds = 12;

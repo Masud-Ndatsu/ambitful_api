@@ -1,20 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import { z } from "zod";
+import { Request, Response } from "express";
 import { authService } from "../services/auth-service";
 import { sendSuccess } from "../utils/send-response";
 import catchError from "../utils/catch-error";
-
-const registerSchema = z.object({
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  phone: z.string().optional(),
-});
-
-const loginSchema = z.object({
-  email: z.string().email("Invalid email format"),
-  password: z.string().min(1, "Password is required"),
-});
+import { registerSchema, loginSchema } from "../schemas/auth";
 
 class AuthController {
   register = catchError(async (req: Request, res: Response) => {
