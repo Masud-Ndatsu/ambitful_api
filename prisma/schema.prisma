@@ -1,0 +1,194 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  name              String
+  password          String
+  avatar            String?
+  phone             String?
+  isEmailVerified   Boolean  @default(false) @map("is_email_verified")
+  jobFunction       String?  @map("job_function")
+  preferredLocations String[] @map("preferred_locations") // User's preferred work locations
+  workAuthorization String?  @map("work_authorization")
+  remoteWork        Boolean  @default(false) @map("remote_work")
+  resumeUrl         String?  @map("resume_url")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  applications Application[]
+  savedJobs    SavedJob[]
+  userOpportunityTypes UserOpportunityType[]
+
+  @@index([email])
+  @@index([isEmailVerified])
+  @@index([jobFunction])
+  @@index([preferredLocations])
+  @@index([createdAt])
+  @@map("users")
+}
+
+model OpportunityType {
+  id   String @id @default(cuid())
+  name String @unique // e.g., "Job", "Internship", "Scholarship", "Fellowship", "Volunteer", "Contract"
+
+  // Relations
+  userOpportunityTypes     UserOpportunityType[]
+  opportunityCategories    OpportunityCategory[]
+
+  @@index([name])
+  @@map("opportunity_types")
+}
+
+model UserOpportunityType {
+  id                String @id @default(cuid())
+  userId            String @map("user_id")
+  opportunityTypeId String @map("opportunity_type_id")
+
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunityType OpportunityType @relation(fields: [opportunityTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, opportunityTypeId])
+  @@index([userId])
+  @@index([opportunityTypeId])
+  @@map("user_opportunity_types")
+}
+
+model Opportunity {
+  id               String   @id @default(cuid())
+  title            String
+  organization     String   // Changed from "company" to be more inclusive
+  description      String
+  requirements     String[]
+  benefits         String[]
+  compensation     String?  // Changed from "salary" to include scholarships, stipends, etc.
+  compensationType String?  @map("compensation_type") // e.g., "salary", "stipend", "scholarship_amount", "hourly"
+  locations        String[] // Multiple locations: ["New York, NY", "Remote", "London, UK"]
+  isRemote         Boolean  @default(false) @map("is_remote")
+  deadline         DateTime
+  isActive         Boolean  @default(true) @map("is_active")
+  applicationUrl   String?  @map("application_url")
+  contactEmail     String?  @map("contact_email")
+  experienceLevel  String?  @map("experience_level")
+  duration         String?  // e.g., "3 months", "1 year", "ongoing"
+  eligibility      String[] // Specific eligibility criteria
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  applications     Application[]
+  savedJobs        SavedJob[]
+  opportunityCategories OpportunityCategory[]
+
+  @@index([title])
+  @@index([organization])
+  @@index([locations])
+  @@index([isRemote])
+  @@index([deadline])
+  @@index([isActive])
+  @@index([experienceLevel])
+  @@index([compensationType])
+  @@index([createdAt])
+  @@index([isActive, deadline])
+  @@index([isActive, locations])
+  @@map("opportunities")
+}
+
+model OpportunityCategory {
+  id                String @id @default(cuid())
+  opportunityId     String @map("opportunity_id")
+  opportunityTypeId String @map("opportunity_type_id")
+
+  opportunity     Opportunity     @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  opportunityType OpportunityType @relation(fields: [opportunityTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([opportunityId, opportunityTypeId])
+  @@index([opportunityId])
+  @@index([opportunityTypeId])
+  @@map("opportunity_categories")
+}
+
+model Application {
+  id            String            @id @default(cuid())
+  userId        String            @map("user_id")
+  opportunityId String            @map("opportunity_id")
+  status        ApplicationStatus @default(PENDING)
+  coverLetter   String?           @map("cover_letter")
+  resumeUrl     String?           @map("resume_url")
+  appliedAt     DateTime          @default(now()) @map("applied_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, opportunityId])
+  @@index([userId])
+  @@index([opportunityId])
+  @@index([status])
+  @@index([appliedAt])
+  @@index([userId, status])
+  @@map("applications")
+}
+
+model SavedJob {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  opportunityId String   @map("opportunity_id")
+  savedAt       DateTime @default(now()) @map("saved_at")
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, opportunityId])
+  @@index([userId])
+  @@index([opportunityId])
+  @@index([savedAt])
+  @@map("saved_jobs")
+}
+
+model Blog {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  content     String
+  author      String
+  category    String
+  readTime    String   @map("read_time")
+  imageUrl    String?  @map("image_url")
+  isPublished Boolean  @default(true) @map("is_published")
+  publishedAt DateTime @default(now()) @map("published_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([title])
+  @@index([author])
+  @@index([category])
+  @@index([isPublished])
+  @@index([publishedAt])
+  @@index([createdAt])
+  @@index([isPublished, publishedAt])
+  @@map("blogs")
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWING
+  INTERVIEW
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
