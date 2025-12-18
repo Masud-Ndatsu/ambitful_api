@@ -5,7 +5,7 @@ export enum RESPONSE_CODE {
   FORBIDDEN = "FORBIDDEN",
   NOT_FOUND = "NOT_FOUND",
   VALIDATION_ERROR = "VALIDATION_ERROR",
-  INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR"
+  INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR",
 }
 
 export default class HttpException extends Error {
@@ -20,7 +20,13 @@ export default class HttpException extends Error {
     this.statusCode = statusCode;
     this.isOperational = true;
 
-    Error.captureStackTrace(this, this.constructor);
+    Object.setPrototypeOf(this, HttpException.prototype);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, HttpException);
+    }
+
+    this.name = this.constructor.name;
   }
 }
 
