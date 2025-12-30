@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "build": "npm run clean && npx prisma generate && tsc",
-    "start": "node dist/server.js",
+    "start": "node --max-old-space-size=4096 dist/server.js",
     "dev": "npm run lint:fix && npm run docs:generate && npx tsx watch src/server.ts",
     "docs:generate": "node scripts/generate-docs.js",
     "docs:dev": "npm run docs:generate && npm run dev",
