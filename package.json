@@ -4,7 +4,7 @@
   "description": "Ambitful AI Backend API",
   "main": "dist/server.js",
   "scripts": {
-    "build": "npm run clean && npx prisma generate && node --max-old-space-size=8192 ./node_modules/typescript/bin/tsc",
+    "build": "npm run clean && npx prisma generate && node ./node_modules/typescript/bin/tsc",
     "start": "node --max-old-space-size=4096 dist/server.js",
     "dev": "npm run lint:fix && npm run docs:generate && npx tsx watch src/server.ts",
     "docs:generate": "node scripts/generate-docs.js",
@@ -12,7 +12,7 @@
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "clean": "rimraf dist",
-    "type-check": "node --max-old-space-size=8192 ./node_modules/typescript/bin/tsc --noEmit",
+    "type-check": "node ./node_modules/typescript/bin/tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "prisma:generate": "prisma generate",
