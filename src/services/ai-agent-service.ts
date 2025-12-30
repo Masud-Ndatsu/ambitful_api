@@ -8,6 +8,7 @@ import {
   provideCareerAdvice,
 } from './agent-tools';
 import { vectorStoreService } from './vector-store-service';
+import { parseLLMResponse } from '../utils/parse-llm-response';
 import logger from '../config/logger';
 
 export interface ChatMessage {
@@ -110,24 +111,11 @@ Always be helpful, professional, and focus on career-related assistance.`;
       });
 
       // Process the response
-      const response: AgentResponse = {
+      let response: AgentResponse = {
         message: result.messages?.[result.messages.length - 1]?.content || result.content || 'No response from agent',
       };
 
-      // Try to parse JSON data if present in the response
-      try {
-        const messageContent = response.message;
-        const jsonMatch = messageContent.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const data = JSON.parse(jsonMatch[0]);
-          response.data = data;
-
-          // Clean the message to remove JSON
-          response.message = messageContent.replace(jsonMatch[0], '').trim();
-        }
-      } catch {
-        // If JSON parsing fails, keep original message
-      }
+      response = parseLLMResponse(response);
 
       // Generate helpful suggestions
       response.suggestions = this.generateSuggestions(message, response);

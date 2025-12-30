@@ -74,6 +74,5 @@ export class ScraperDoService {
   }
 }
 
-const scraperDo = new ScraperDoService();
-
+export const scraperDo = new ScraperDoService();
 export default scraperDo;

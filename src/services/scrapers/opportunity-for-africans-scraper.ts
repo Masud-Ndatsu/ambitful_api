@@ -220,3 +220,6 @@ export class OpportunityForAfricansScraper extends BaseScraper {
     };
   }
 }
+
+export const opportunityForAfricansScraper = new OpportunityForAfricansScraper();
+export default opportunityForAfricansScraper;

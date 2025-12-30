@@ -75,3 +75,6 @@ export class IndeedScraper extends BaseScraper {
     };
   }
 }
+
+export const indeedScraper = new IndeedScraper();
+export default indeedScraper;

@@ -75,3 +75,6 @@ export class LinkedInScraper extends BaseScraper {
     };
   }
 }
+
+export const linkedInScraper = new LinkedInScraper();
+export default linkedInScraper;

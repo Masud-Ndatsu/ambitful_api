@@ -1,7 +1,7 @@
 import { BaseScraper } from './base-scraper';
-import { OpportunityForAfricansScraper } from './opportunity-for-africans-scraper';
-import { IndeedScraper } from './indeed-scraper';
-import { LinkedInScraper } from './linkedin-scraper';
+import { opportunityForAfricansScraper } from './opportunity-for-africans-scraper';
+import { indeedScraper } from './indeed-scraper';
+import { linkedInScraper } from './linkedin-scraper';
 
 export type ScraperType = 'INDEED' | 'OPPORTUNITY_FOR_AFRICANS' | 'LINKEDIN';
 
@@ -9,13 +9,9 @@ export class ScraperFactory {
   private static scrapers: Map<ScraperType, BaseScraper> = new Map();
 
   static {
-    // Initialize scrapers
-    this.scrapers.set(
-      'OPPORTUNITY_FOR_AFRICANS',
-      new OpportunityForAfricansScraper()
-    );
-    this.scrapers.set('INDEED', new IndeedScraper());
-    this.scrapers.set('LINKEDIN', new LinkedInScraper());
+    this.scrapers.set('OPPORTUNITY_FOR_AFRICANS', opportunityForAfricansScraper);
+    this.scrapers.set('INDEED', indeedScraper);
+    this.scrapers.set('LINKEDIN', linkedInScraper);
   }
 
   /**
