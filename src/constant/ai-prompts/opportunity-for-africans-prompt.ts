@@ -1,7 +1,7 @@
-import LLMPromptBuilder from '../../utils/llm-prompt-builder';
+import llmPromptBuilder from '../../utils/llm-prompt-builder';
 
 export const extractOpportunityMetadataPrompt = (md: string) => {
-  const prompt = new LLMPromptBuilder()
+  const prompt = llmPromptBuilder
     .addInstruction(
       'You are a smart extraction agent. Given an OpportunityDesk listing page\'s content (converted from HTML to Markdown), extract only valid metadata for opportunities explicitly present in the content. Do not guess or hallucinate missing information.'
     )
@@ -44,7 +44,7 @@ Return the following JSON structure:
 };
 
 export const extractOpportunityDetailsPrompt = (md: string) => {
-  const prompt = new LLMPromptBuilder()
+  const prompt = llmPromptBuilder
     .addInstruction(
       'You are a smart extraction agent. Given an OpportunityDesk opportunity\'s full content (converted from HTML to Markdown), extract structured metadata in JSON format. Only extract information that is explicitly stated in the content. Do not guess or hallucinate missing details.'
     )

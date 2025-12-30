@@ -11,8 +11,13 @@ class AdminOpportunityController {
   ) => {
     try {
       const validatedQuery = opportunityQuerySchema.parse(req.query);
-      const result = await adminOpportunityService.getAdminOpportunities(validatedQuery);
-      return sendSuccess(res, result, 'Admin opportunities retrieved successfully');
+      const result =
+        await adminOpportunityService.getAdminOpportunities(validatedQuery);
+      return sendSuccess(
+        res,
+        result,
+        'Admin opportunities retrieved successfully'
+      );
     } catch (error) {
       next(error);
     }
@@ -25,7 +30,11 @@ class AdminOpportunityController {
   ) => {
     try {
       const result = await adminOpportunityService.getOpportunityStats();
-      return sendSuccess(res, result, 'Opportunity statistics retrieved successfully');
+      return sendSuccess(
+        res,
+        result,
+        'Opportunity statistics retrieved successfully'
+      );
     } catch (error) {
       next(error);
     }
@@ -39,9 +48,16 @@ class AdminOpportunityController {
     try {
       const { id } = req.params;
       const { status } = req.body;
-      
-      const result = await adminOpportunityService.updateOpportunityStatus(id, status);
-      return sendSuccess(res, result, 'Opportunity status updated successfully');
+
+      const result = await adminOpportunityService.updateOpportunityStatus(
+        id,
+        status
+      );
+      return sendSuccess(
+        res,
+        result,
+        'Opportunity status updated successfully'
+      );
     } catch (error) {
       next(error);
     }
@@ -54,7 +70,7 @@ class AdminOpportunityController {
   ) => {
     try {
       const { id } = req.params;
-      
+
       const result = await adminOpportunityService.deleteOpportunity(id);
       return sendSuccess(res, result, 'Opportunity deleted successfully');
     } catch (error) {

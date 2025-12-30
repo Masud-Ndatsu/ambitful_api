@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { crawlSourceController } from '../controllers/crawl-source-controller';
 import { authenticate } from '../middleware/auth';
-import { requireAdmin, requireModeratorOrAdmin } from '../middleware/role-guard';
+import {
+  requireAdmin,
+  requireModeratorOrAdmin,
+} from '../middleware/role-guard';
 
 const router = Router();
 
@@ -9,11 +12,7 @@ const router = Router();
 router.use(authenticate);
 
 // Get all crawl sources (moderator or admin)
-router.get(
-  '/',
-  requireModeratorOrAdmin,
-  crawlSourceController.getCrawlSources
-);
+router.get('/', requireModeratorOrAdmin, crawlSourceController.getCrawlSources);
 
 // Get crawl source by ID (moderator or admin)
 router.get(
@@ -37,11 +36,7 @@ router.put(
 );
 
 // Delete crawl source (admin only)
-router.delete(
-  '/:id',
-  requireAdmin,
-  crawlSourceController.deleteCrawlSource
-);
+router.delete('/:id', requireAdmin, crawlSourceController.deleteCrawlSource);
 
 // Trigger crawl (moderator or admin)
 router.post(
@@ -51,4 +46,3 @@ router.post(
 );
 
 export default router;
-

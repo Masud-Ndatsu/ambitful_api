@@ -1,8 +1,8 @@
-import express from 'express';
+import { Router } from 'express';
 import { agentController } from '../controllers/agent-controller';
 import { authenticate } from '../middleware/auth';
 
-const router = express.Router();
+const router = Router();
 
 // All agent routes require authentication
 router.use(authenticate);

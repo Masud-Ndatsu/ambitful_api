@@ -16,7 +16,10 @@ class OnboardingController {
       }
 
       const validatedData = onboardingStepOneSchema.parse(req.body);
-      const result = await onboardingService.updateStepOne(userId, validatedData);
+      const result = await onboardingService.updateStepOne(
+        userId,
+        validatedData
+      );
 
       return sendSuccess(res, result, 'Step 1 completed successfully', 200);
     } catch (error) {
@@ -32,7 +35,10 @@ class OnboardingController {
       }
 
       const validatedData = onboardingStepTwoSchema.parse(req.body);
-      const result = await onboardingService.updateStepTwo(userId, validatedData);
+      const result = await onboardingService.updateStepTwo(
+        userId,
+        validatedData
+      );
 
       return sendSuccess(res, result, 'Step 2 completed successfully', 200);
     } catch (error) {
@@ -40,7 +46,11 @@ class OnboardingController {
     }
   };
 
-  completeOnboarding = async (req: Request, res: Response, next: NextFunction) => {
+  completeOnboarding = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -48,15 +58,27 @@ class OnboardingController {
       }
 
       const validatedData = completeOnboardingSchema.parse(req.body);
-      const result = await onboardingService.completeOnboarding(userId, validatedData);
+      const result = await onboardingService.completeOnboarding(
+        userId,
+        validatedData
+      );
 
-      return sendSuccess(res, result, 'Onboarding completed successfully! Welcome to Ambitful.', 200);
+      return sendSuccess(
+        res,
+        result,
+        'Onboarding completed successfully! Welcome to Ambitful.',
+        200
+      );
     } catch (error) {
       next(error);
     }
   };
 
-  getOnboardingStatus = async (req: Request, res: Response, next: NextFunction) => {
+  getOnboardingStatus = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -64,7 +86,12 @@ class OnboardingController {
       }
 
       const status = await onboardingService.getOnboardingStatus(userId);
-      return sendSuccess(res, status, 'Onboarding status retrieved successfully', 200);
+      return sendSuccess(
+        res,
+        status,
+        'Onboarding status retrieved successfully',
+        200
+      );
     } catch (error) {
       next(error);
     }

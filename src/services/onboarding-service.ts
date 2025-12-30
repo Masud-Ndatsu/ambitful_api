@@ -15,7 +15,10 @@ interface OnboardingResult {
 }
 
 class OnboardingService {
-  async updateStepOne(userId: string, data: OnboardingStepOneData): Promise<OnboardingResult> {
+  async updateStepOne(
+    userId: string,
+    data: OnboardingStepOneData
+  ): Promise<OnboardingResult> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
@@ -87,7 +90,10 @@ class OnboardingService {
     };
   }
 
-  async updateStepTwo(userId: string, data: OnboardingStepTwoData): Promise<OnboardingResult> {
+  async updateStepTwo(
+    userId: string,
+    data: OnboardingStepTwoData
+  ): Promise<OnboardingResult> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
@@ -114,7 +120,10 @@ class OnboardingService {
     };
   }
 
-  async completeOnboarding(userId: string, data: CompleteOnboardingData): Promise<OnboardingResult> {
+  async completeOnboarding(
+    userId: string,
+    data: CompleteOnboardingData
+  ): Promise<OnboardingResult> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -202,7 +211,10 @@ class OnboardingService {
       await vectorStoreService.indexUserProfile(userId);
       logger.info(`User profile indexed in vector store: ${userId}`);
     } catch (vectorError) {
-      logger.warn(`Failed to index user profile in vector store: ${userId}`, vectorError);
+      logger.warn(
+        `Failed to index user profile in vector store: ${userId}`,
+        vectorError
+      );
       // Don't fail onboarding if vector indexing fails
     }
 

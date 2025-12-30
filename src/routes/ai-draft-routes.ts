@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import { aiDraftController } from '../controllers/ai-draft-controller';
 import { authenticate } from '../middleware/auth';
-import { requireAdmin, requireModeratorOrAdmin } from '../middleware/role-guard';
+import {
+  requireAdmin,
+  requireModeratorOrAdmin,
+} from '../middleware/role-guard';
 
 const router = Router();
 
@@ -9,11 +12,7 @@ const router = Router();
 router.use(authenticate);
 
 // Get all AI drafts (moderator or admin)
-router.get(
-  '/',
-  requireModeratorOrAdmin,
-  aiDraftController.getAIDrafts
-);
+router.get('/', requireModeratorOrAdmin, aiDraftController.getAIDrafts);
 
 // Get AI draft statistics (moderator or admin)
 router.get(
@@ -23,32 +22,16 @@ router.get(
 );
 
 // Get AI draft by ID (moderator or admin)
-router.get(
-  '/:id',
-  requireModeratorOrAdmin,
-  aiDraftController.getAIDraftById
-);
+router.get('/:id', requireModeratorOrAdmin, aiDraftController.getAIDraftById);
 
 // Create AI draft (moderator or admin)
-router.post(
-  '/',
-  requireModeratorOrAdmin,
-  aiDraftController.createAIDraft
-);
+router.post('/', requireModeratorOrAdmin, aiDraftController.createAIDraft);
 
 // Update AI draft (moderator or admin)
-router.put(
-  '/:id',
-  requireModeratorOrAdmin,
-  aiDraftController.updateAIDraft
-);
+router.put('/:id', requireModeratorOrAdmin, aiDraftController.updateAIDraft);
 
 // Delete AI draft (admin only)
-router.delete(
-  '/:id',
-  requireAdmin,
-  aiDraftController.deleteAIDraft
-);
+router.delete('/:id', requireAdmin, aiDraftController.deleteAIDraft);
 
 // Review AI draft (approve/reject) (moderator or admin)
 router.patch(
@@ -65,4 +48,3 @@ router.post(
 );
 
 export default router;
-

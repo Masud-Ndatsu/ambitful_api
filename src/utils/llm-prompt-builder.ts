@@ -22,7 +22,7 @@ type PromptComponent = {
 /**
  * Class for building structured prompts for LLMs (Large Language Models).
  */
-export default class LLMPromptBuilder {
+class LLMPromptBuilder {
   private components: PromptComponent[];
   private globalContext: Record<string, any>;
   private userInputs: Record<string, any>;
@@ -242,9 +242,9 @@ export default class LLMPromptBuilder {
     }
 
     // Add components
-    // prompt += this.components
-    //   .map((component) => this.renderComponent(component))
-    //   .join("\n\n");
+    prompt += this.components
+      .map((component) => this.renderComponent(component))
+      .join('\n\n');
 
     // Add user inputs if available
     if (Object.keys(this.userInputs).length > 0) {
@@ -265,44 +265,51 @@ export default class LLMPromptBuilder {
    * @param {PromptComponent} component - The prompt component to render.
    * @returns {string} The rendered component as a string.
    */
-  // private renderComponent(component: PromptComponent): string {
-  //   switch (component.type) {
-  //     case 'raw':
-  //       return component.content;
-  //     case 'instruction':
-  //       const prefix = component.options?.importance;
-  //       return `<instruction>\n${prefix ?? ''} ${
-  //         component.content
-  //       }\n</instruction>`;
-  //     case 'context':
-  //       return component.content.length > 0
-  //         ? `<context>\n${component.content}\n</context>`
-  //         : 'N/A';
-  //     case 'rule':
-  //       return `<rules>\n${component.content}\n</rules>`;
-  //     case 'illustration':
-  //       let illustrationText = `<illustration>\n${component.content}`;
-  //       if (component.options?.explanation) {
-  //         illustrationText += `\n*${component.options.explanation}*`;
-  //       }
-  //       return `${illustrationText}\n</illustration>`;
-  //     case 'useCase':
-  //       let useCaseText = `<use_case>\n${component.content}`;
-  //       if (component.options?.expectedOutcome) {
-  //         useCaseText += `\n**Expected:** ${component.options.expectedOutcome}`;
-  //       }
-  //       return `${useCaseText}\n</use_case>`;
-  //     case 'specialCase':
-  //       return `<special_case>\n${component.content}\n**Handling:** ${component.options?.handling}\n</special_case>`;
-  //     case 'custom':
-  //       const label = component.options?.label
-  //         .toLowerCase()
-  //         .replace(/\s+/g, '_');
-  //       return `<${label}>\n${component.content}\n</${label}>`;
-  //     case 'table':
-  //       return `<table>\n${component.content}\n</table>`;
-  //     default:
-  //       return '';
-  //   }
-  // }
+  private renderComponent(component: PromptComponent): string {
+    switch (component.type) {
+      case 'raw':
+        return component.content;
+      case 'instruction': {
+        const prefix = component.options?.importance;
+        return `<instruction>\n${prefix ?? ''} ${
+          component.content
+        }\n</instruction>`;
+      }
+      case 'context':
+        return component.content.length > 0
+          ? `<context>\n${component.content}\n</context>`
+          : 'N/A';
+      case 'rule':
+        return `<rules>\n${component.content}\n</rules>`;
+      case 'illustration': {
+        let illustrationText = `<illustration>\n${component.content}`;
+        if (component.options?.explanation) {
+          illustrationText += `\n*${component.options.explanation}*`;
+        }
+        return `${illustrationText}\n</illustration>`;
+      }
+      case 'useCase': {
+        let useCaseText = `<use_case>\n${component.content}`;
+        if (component.options?.expectedOutcome) {
+          useCaseText += `\n**Expected:** ${component.options.expectedOutcome}`;
+        }
+        return `${useCaseText}\n</use_case>`;
+      }
+      case 'specialCase':
+        return `<special_case>\n${component.content}\n**Handling:** ${component.options?.handling}\n</special_case>`;
+      case 'custom': {
+        const label = component.options?.label
+          .toLowerCase()
+          .replace(/\s+/g, '_');
+        return `<${label}>\n${component.content}\n</${label}>`;
+      }
+      case 'table':
+        return `<table>\n${component.content}\n</table>`;
+      default:
+        return '';
+    }
+  }
 }
+
+export const llmPromptBuilder = new LLMPromptBuilder();
+export default llmPromptBuilder;

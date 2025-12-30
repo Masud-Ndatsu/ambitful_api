@@ -1,20 +1,17 @@
 import { Router } from 'express';
 import { opportunityController } from '../controllers/opportunity-controller';
 import { authenticate } from '../middleware/auth';
-import { requireAdmin, requireModeratorOrAdmin } from '../middleware/role-guard';
+import {
+  requireAdmin,
+  requireModeratorOrAdmin,
+} from '../middleware/role-guard';
 
 const router = Router();
 
 // Public routes - opportunities can be viewed by anyone
-router.get(
-  '/',
-  opportunityController.getOpportunities
-);
+router.get('/', opportunityController.getOpportunities);
 
-router.get(
-  '/:id',
-  opportunityController.getOpportunityById
-);
+router.get('/:id', opportunityController.getOpportunityById);
 
 // Protected routes - require authentication
 router.use(authenticate);
@@ -32,39 +29,20 @@ router.put(
   opportunityController.updateOpportunity
 );
 
-router.delete(
-  '/:id',
-  requireAdmin,
-  opportunityController.deleteOpportunity
-);
+router.delete('/:id', requireAdmin, opportunityController.deleteOpportunity);
 
 // User-specific routes
 // Saved Jobs
-router.post(
-  '/saved',
-  opportunityController.saveJob
-);
+router.post('/saved', opportunityController.saveJob);
 
-router.delete(
-  '/saved/:opportunityId',
-  opportunityController.unsaveJob
-);
+router.delete('/saved/:opportunityId', opportunityController.unsaveJob);
 
-router.get(
-  '/saved/list',
-  opportunityController.getUserSavedJobs
-);
+router.get('/saved/list', opportunityController.getUserSavedJobs);
 
 // Applications
-router.post(
-  '/apply',
-  opportunityController.applyToOpportunity
-);
+router.post('/apply', opportunityController.applyToOpportunity);
 
-router.get(
-  '/applications/list',
-  opportunityController.getUserApplications
-);
+router.get('/applications/list', opportunityController.getUserApplications);
 
 router.get(
   '/applications/:applicationId',

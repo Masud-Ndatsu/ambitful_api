@@ -3,12 +3,12 @@ import {
   OpportunityDetails,
   ScrapingResult,
 } from './base-scraper';
-import scraperDo, { ScraperDoService } from '../scraper-do-service';
+import scraperDo from '../scraper-do-service';
 import { convertHtmlToMarkdown } from '../../utils/html-to-md.js';
 import {
   extractOpportunityDetailsPrompt,
   extractOpportunityMetadataPrompt,
-} from '../../constant/ai-prompts/opportunity-desk-prompt.js';
+} from '../../constant/ai-prompts/opportunity-for-africans-prompt.js';
 import openaiClient, { OPENAI_MODEL } from '../../constant/ai';
 import retry from 'async-retry';
 import cleanLLMJson from '../../utils/clean-llm-json';
@@ -21,12 +21,10 @@ import { CreateOpportunityData } from '../../schemas/opportunity';
 
 export class OpportunityForAfricansScraper extends BaseScraper {
   scraperType = 'OPPORTUNITY_FOR_AFRICANS' as const;
-  private scraperDo: ScraperDoService;
   private CACHE_TTL = 60 * 60 * 24; // 24 hours
 
   constructor() {
     super();
-    this.scraperDo = scraperDo;
   }
 
   getDisplayName(): string {
@@ -68,7 +66,7 @@ export class OpportunityForAfricansScraper extends BaseScraper {
     }
 
     try {
-      const response = await this.scraperDo.scrape(url);
+      const response = await scraperDo.scrape(url);
       const data = response?.data;
 
       if (!data) {
@@ -91,12 +89,14 @@ export class OpportunityForAfricansScraper extends BaseScraper {
           });
 
           const aiResp = aiResult.choices[0]?.message?.content || '';
+          console.log({ aiResp });
           return cleanLLMJson(aiResp as any);
         },
         { retries: 3, minTimeout: 1000, maxTimeout: 5000 }
       );
 
       const opportunityListingResp: OpportunityListingResp = JSON.parse(result);
+      console.log({ opportunityListingResp });
 
       // Cache the result
       await redis.set(
@@ -133,7 +133,7 @@ export class OpportunityForAfricansScraper extends BaseScraper {
 
     const opportunityDetailsPage =
       this.constructOpportunityDetailsPage(opportunityId);
-    const response = await this.scraperDo.scrape(opportunityDetailsPage);
+    const response = await scraperDo.scrape(opportunityDetailsPage);
     const data = response?.data;
 
     if (!data) {

@@ -1,8 +1,8 @@
-import express from 'express';
+import { Router } from 'express';
 import { userManagementController } from '../controllers/user-management-controller';
 import { authenticate } from '../middleware/auth';
 
-const router = express.Router();
+const router = Router();
 
 // All user management routes require authentication
 router.use(authenticate);

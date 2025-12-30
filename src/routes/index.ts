@@ -12,7 +12,7 @@ import userManagementRoutes from './user-management-routes';
 
 const router = Router();
 
-router.get('/', (req, res) => {
+router.get('/', (_req, res) => {
   return sendSuccess(
     res,
     {
