@@ -1,4 +1,6 @@
 interface Config {
+  OPENAI_API_KEY: string;
+  PINECONE_API_KEY: string;
   NODE_ENV: string;
   PORT: string;
   DATABASE_URL: string;
@@ -9,7 +11,10 @@ interface Config {
   RATE_LIMIT_MAX_REQUESTS: string;
   MAX_FILE_SIZE: string;
   UPLOAD_DIR: string;
+  REDIS_URL: string;
+  SCRAPERDO_API_KEY: string;
 }
+
 
 export const config: Config = {
   NODE_ENV: process.env.NODE_ENV!,
@@ -22,4 +27,8 @@ export const config: Config = {
   RATE_LIMIT_MAX_REQUESTS: process.env.RATE_LIMIT_MAX_REQUESTS!,
   MAX_FILE_SIZE: process.env.MAX_FILE_SIZE!,
   UPLOAD_DIR: process.env.UPLOAD_DIR!,
+  REDIS_URL: process.env.REDIS_URL!,
+  SCRAPERDO_API_KEY: process.env.SCRAPERDO_API_KEY!,
+  PINECONE_API_KEY: process.env.PINECONE_API_KEY!,
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY!,
 };

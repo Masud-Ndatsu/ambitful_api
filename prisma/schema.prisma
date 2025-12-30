@@ -14,30 +14,35 @@ datasource db {
 }
 
 model User {
-  id                String   @id @default(cuid())
-  email             String   @unique
-  name              String
-  password          String
-  avatar            String?
-  phone             String?
-  isEmailVerified   Boolean  @default(false) @map("is_email_verified")
-  jobFunction       String?  @map("job_function")
+  id                 String   @id @default(cuid())
+  email              String   @unique
+  name               String
+  password           String
+  avatar             String?
+  phone              String?
+  role               UserRole @default(USER)
+  isEmailVerified    Boolean  @default(false) @map("is_email_verified")
+  jobFunction        String?  @map("job_function")
   preferredLocations String[] @map("preferred_locations") // User's preferred work locations
-  workAuthorization String?  @map("work_authorization")
-  remoteWork        Boolean  @default(false) @map("remote_work")
-  resumeUrl         String?  @map("resume_url")
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+  workAuthorization  String?  @map("work_authorization")
+  remoteWork          Boolean   @default(false) @map("remote_work")
+  resumeUrl           String?   @map("resume_url")
+  isOnboardingComplete Boolean  @default(false) @map("is_onboarding_complete")
+  onboardingCompletedAt DateTime? @map("onboarding_completed_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  applications Application[]
-  savedJobs    SavedJob[]
+  applications         Application[]
+  savedJobs            SavedJob[]
   userOpportunityTypes UserOpportunityType[]
 
   @@index([email])
   @@index([isEmailVerified])
+  @@index([role])
   @@index([jobFunction])
   @@index([preferredLocations])
+  @@index([isOnboardingComplete])
   @@index([createdAt])
   @@map("users")
 }
@@ -47,8 +52,8 @@ model OpportunityType {
   name String @unique // e.g., "Job", "Internship", "Scholarship", "Fellowship", "Volunteer", "Contract"
 
   // Relations
-  userOpportunityTypes     UserOpportunityType[]
-  opportunityCategories    OpportunityCategory[]
+  userOpportunityTypes  UserOpportunityType[]
+  opportunityCategories OpportunityCategory[]
 
   @@index([name])
   @@map("opportunity_types")
@@ -71,27 +76,29 @@ model UserOpportunityType {
 model Opportunity {
   id               String   @id @default(cuid())
   title            String
-  organization     String   // Changed from "company" to be more inclusive
+  organization     String // Changed from "company" to be more inclusive
   description      String
   requirements     String[]
   benefits         String[]
-  compensation     String?  // Changed from "salary" to include scholarships, stipends, etc.
+  compensation     String? // Changed from "salary" to include scholarships, stipends, etc.
   compensationType String?  @map("compensation_type") // e.g., "salary", "stipend", "scholarship_amount", "hourly"
   locations        String[] // Multiple locations: ["New York, NY", "Remote", "London, UK"]
   isRemote         Boolean  @default(false) @map("is_remote")
   deadline         DateTime
+  author           String?
+  views            Int      @default(0)
   isActive         Boolean  @default(true) @map("is_active")
   applicationUrl   String?  @map("application_url")
   contactEmail     String?  @map("contact_email")
   experienceLevel  String?  @map("experience_level")
-  duration         String?  // e.g., "3 months", "1 year", "ongoing"
+  duration         String? // e.g., "3 months", "1 year", "ongoing"
   eligibility      String[] // Specific eligibility criteria
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
   // Relations
-  applications     Application[]
-  savedJobs        SavedJob[]
+  applications          Application[]
+  savedJobs             SavedJob[]
   opportunityCategories OpportunityCategory[]
 
   @@index([title])
@@ -191,4 +198,104 @@ enum ApplicationStatus {
   ACCEPTED
   REJECTED
   WITHDRAWN
+}
+
+model CrawlSource {
+  id                 String             @id @default(cuid())
+  name               String
+  url                String
+  frequency          CrawlFrequency     @default(WEEKLY)
+  status             CrawlSourceStatus  @default(INACTIVE)
+  scraperType        ScraperType        @default(OPPORTUNITY_FOR_AFRICANS) @map("scraper_type")
+  cssSelectors       String?            @map("css_selectors")
+  lastCrawledAt      DateTime?          @map("last_crawled_at")
+  nextCrawlAt        DateTime?          @map("next_crawl_at")
+  opportunitiesFound Int                @default(0) @map("opportunities_found")
+  isActive           Boolean            @default(true) @map("is_active")
+  isDetailsCrawled   Boolean            @default(true) @map("is_details_crawled")
+  errorMessage       String?            @map("error_message")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+
+  // Relations
+  aiDrafts AIDraft[]
+
+  @@index([status])
+  @@index([frequency])
+  @@index([isActive])
+  @@index([nextCrawlAt])
+  @@index([createdAt])
+  @@map("crawl_sources")
+}
+
+model AIDraft {
+  id               String         @id @default(cuid())
+  title            String
+  organization     String
+  description      String
+  requirements     String[]
+  benefits         String[]
+  compensation     String?
+  compensationType String?        @map("compensation_type")
+  locations        String[]
+  isRemote         Boolean        @default(false) @map("is_remote")
+  deadline         DateTime
+  applicationUrl   String?        @map("application_url")
+  contactEmail     String?        @map("contact_email")
+  experienceLevel  String?        @map("experience_level")
+  duration         String?
+  eligibility      String[]
+  status           AIDraftStatus  @default(PENDING)
+  reviewedBy       String?        @map("reviewed_by") // User ID of reviewer
+  reviewedAt       DateTime?      @map("reviewed_at")
+  rejectionReason  String?        @map("rejection_reason")
+  isDetailsCrawled Boolean        @default(false) @map("is_details_crawled")
+  rawScrapedData   Json?          @map("raw_scraped_data")
+  opportunityId    String?        @unique @map("opportunity_id") // If approved and published
+  crawlSourceId    String         @map("crawl_source_id")
+  sourceUrl        String         @map("source_url") // Original URL where it was found
+  rawData          String?        @map("raw_data") // JSON string of original scraped data
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  // Relations
+  crawlSource CrawlSource @relation(fields: [crawlSourceId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([crawlSourceId])
+  @@index([reviewedBy])
+  @@index([createdAt])
+  @@index([status, createdAt])
+  @@map("ai_drafts")
+}
+
+enum CrawlFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum CrawlSourceStatus {
+  ACTIVE
+  INACTIVE
+  ERROR
+}
+
+enum ScraperType {
+  INDEED
+  OPPORTUNITY_FOR_AFRICANS
+  LINKEDIN
+}
+
+enum UserRole {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum AIDraftStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  PUBLISHED
 }

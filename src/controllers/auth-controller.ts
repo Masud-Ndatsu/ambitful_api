@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { authService } from '../services/auth-service';
 import { sendSuccess } from '../utils/send-response';
-import { registerSchema, loginSchema } from '../schemas/auth';
+import { registerSchema, loginSchema, refreshTokenSchema } from '../schemas/auth';
 
 class AuthController {
   register = async (req: Request, res: Response, next: NextFunction) => {
@@ -49,6 +49,18 @@ class AuthController {
       // Since we're using stateless JWT tokens, logout is handled client-side
       // by removing the token from storage
       return sendSuccess(res, null, 'Logout successful');
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  refresh = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const validatedData = refreshTokenSchema.parse(req.body);
+
+      const result = await authService.refreshToken(validatedData.refreshToken);
+
+      return sendSuccess(res, result, 'Token refreshed successfully');
     } catch (error) {
       next(error);
     }

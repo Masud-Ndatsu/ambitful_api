@@ -3,10 +3,11 @@ import express, { Express, Request, Response } from 'express';
 import compression from 'compression';
 import cors from 'cors';
 import helmet from 'helmet';
+import morgan from 'morgan';
 import http from 'http';
 import { validateEnv } from './config/validate-env';
 import routes from './routes';
-import logger from './config/logger';
+import logger, { morganStream } from './config/logger';
 import { errorHandler } from './middleware/error-handler';
 import { notFoundHandler } from './middleware/not-found-handler';
 import { requestId } from './middleware/request-id';
@@ -24,6 +25,8 @@ app.use(helmet());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(compression());
+
+app.use(morgan('combined', { stream: morganStream }));
 
 app.get('/', async (req: Request, res: Response) => {
   res.send({ message: 'Ambitful AI API server is Running!!!' });

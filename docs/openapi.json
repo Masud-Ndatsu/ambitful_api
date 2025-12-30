@@ -234,10 +234,542 @@
             "example": "+1234567890"
           }
         }
+      },
+      "AgentChatMessage": {
+        "type": "object",
+        "required": [
+          "role",
+          "content",
+          "timestamp"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "description": "Who sent this message"
+          },
+          "content": {
+            "type": "string",
+            "description": "The message content"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the message was sent"
+          }
+        }
+      },
+      "AgentResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Agent's response message"
+          },
+          "data": {
+            "type": "object",
+            "description": "Structured data from agent tools"
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Suggested follow-up questions"
+          }
+        }
+      },
+      "OpportunityResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique opportunity identifier"
+          },
+          "title": {
+            "type": "string",
+            "description": "Opportunity title"
+          },
+          "organization": {
+            "type": "string",
+            "description": "Organization offering the opportunity"
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Available locations"
+          },
+          "compensation": {
+            "type": "string",
+            "description": "Compensation details"
+          },
+          "compensationType": {
+            "type": "string",
+            "description": "Type of compensation (salary, stipend, etc.)"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of opportunity (Job, Internship, etc.)"
+          },
+          "remote": {
+            "type": "boolean",
+            "description": "Whether remote work is available"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Application deadline"
+          }
+        }
+      },
+      "AgentHealth": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "initializing",
+              "error"
+            ],
+            "description": "Current status of the AI agent"
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Available agent tools"
+          },
+          "vectorStore": {
+            "type": "boolean",
+            "description": "Vector store health status"
+          }
+        }
       }
     }
   },
   "paths": {
+    "/api/agent/chat": {
+      "post": {
+        "summary": "Chat with AI agent",
+        "description": "Send a message to the AI agent and get a response with career guidance",
+        "tags": [
+          "Agent"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "message"
+                ],
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "User's message to the AI agent",
+                    "minLength": 1,
+                    "maxLength": 1000,
+                    "example": "Help me find software engineering jobs in San Francisco"
+                  },
+                  "conversationHistory": {
+                    "type": "array",
+                    "description": "Previous conversation messages for context",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "role",
+                        "content",
+                        "timestamp"
+                      ],
+                      "properties": {
+                        "role": {
+                          "type": "string",
+                          "enum": [
+                            "user",
+                            "assistant"
+                          ],
+                          "description": "Who sent this message"
+                        },
+                        "content": {
+                          "type": "string",
+                          "description": "The message content"
+                        },
+                        "timestamp": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "When the message was sent"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Agent response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "description": "Agent's response message",
+                          "example": "I found several software engineering opportunities in San Francisco. Here are some top matches:"
+                        },
+                        "data": {
+                          "type": "object",
+                          "description": "Structured data from agent tools",
+                          "properties": {
+                            "opportunities": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "example": "opp_123"
+                                  },
+                                  "title": {
+                                    "type": "string",
+                                    "example": "Senior Software Engineer"
+                                  },
+                                  "organization": {
+                                    "type": "string",
+                                    "example": "TechCorp Inc"
+                                  },
+                                  "locations": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    },
+                                    "example": [
+                                      "San Francisco, CA"
+                                    ]
+                                  },
+                                  "compensation": {
+                                    "type": "string",
+                                    "example": "$150,000 - $200,000"
+                                  },
+                                  "compensationType": {
+                                    "type": "string",
+                                    "example": "salary"
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "example": "Job"
+                                  },
+                                  "remote": {
+                                    "type": "boolean",
+                                    "example": false
+                                  },
+                                  "deadline": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "example": "2024-02-15T00:00:00Z"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "suggestions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Suggested follow-up questions",
+                          "example": [
+                            "Tell me more about specific requirements for this role",
+                            "Save this opportunity to my list",
+                            "Find similar opportunities"
+                          ]
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Message processed successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalidMessage": {
+                    "summary": "Invalid message format",
+                    "value": {
+                      "success": false,
+                      "message": "Message cannot be empty"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "summary": "Not authenticated",
+                    "value": {
+                      "success": false,
+                      "message": "User authentication required"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/health": {
+      "get": {
+        "summary": "Get AI agent health status",
+        "description": "Check the health and status of the AI agent and its components",
+        "tags": [
+          "Agent"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agent health status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "ready",
+                            "initializing",
+                            "error"
+                          ],
+                          "description": "Current status of the AI agent",
+                          "example": "ready"
+                        },
+                        "tools": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Available agent tools",
+                          "example": [
+                            "search_opportunities",
+                            "get_user_profile",
+                            "get_opportunity_details",
+                            "save_opportunity",
+                            "get_saved_jobs",
+                            "career_advice"
+                          ]
+                        },
+                        "vectorStore": {
+                          "type": "boolean",
+                          "description": "Vector store health status",
+                          "example": true
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Agent health retrieved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/initialize-vector-store": {
+      "post": {
+        "summary": "Initialize vector store (Admin only)",
+        "description": "Initialize the vector store for RAG functionality",
+        "tags": [
+          "Agent"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vector store initialized successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "initialized": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Vector store initialized successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Admin access required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "forbidden": {
+                    "summary": "Admin access required",
+                    "value": {
+                      "success": false,
+                      "message": "Admin access required"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agent/index-user-data": {
+      "post": {
+        "summary": "Index user data for personalization",
+        "description": "Index the current user's profile data for personalized agent responses",
+        "tags": [
+          "Agent"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User data indexed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "indexed": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User data indexed successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/register": {
       "post": {
         "tags": [
