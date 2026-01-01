@@ -1,6 +1,7 @@
 interface Config {
   OPENAI_API_KEY: string;
   GEN_API_KEY: string;
+  GEMINI_API_KEYS: string[];
   PINECONE_API_KEY: string;
   NODE_ENV: string;
   PORT: string;
@@ -15,6 +16,11 @@ interface Config {
   REDIS_URL: string;
   SCRAPERDO_API_KEY: string;
 }
+
+const getGeminiKeys = (key: string) => {
+  if (!key) return [];
+  return key.split('::');
+};
 
 export const config: Config = {
   NODE_ENV: process.env.NODE_ENV!,
@@ -32,4 +38,7 @@ export const config: Config = {
   PINECONE_API_KEY: process.env.PINECONE_API_KEY!,
   OPENAI_API_KEY: process.env.OPENAI_API_KEY!,
   GEN_API_KEY: process.env.GEN_API_KEY!,
+  GEMINI_API_KEYS: getGeminiKeys(process.env.GEMINI_API_KEYS! ?? ''),
 };
+
+export { getGeminiKeys };

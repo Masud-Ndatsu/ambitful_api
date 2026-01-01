@@ -5,7 +5,7 @@ import {
   UserRole,
   AIDraftStatus,
 } from "../src/generated/prisma/client";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import { env } from "prisma/config";
 
 const connectionString = env("DATABASE_URL");

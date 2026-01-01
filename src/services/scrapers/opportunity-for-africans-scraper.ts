@@ -9,13 +9,13 @@ import {
   extractOpportunityDetailsPrompt,
   extractOpportunityMetadataPrompt,
 } from '../../constant/ai-prompts/opportunity-for-africans-prompt.js';
-import geminiClient, { GEMINI_MODEL } from '../../constant/ai';
 import retry from 'async-retry';
 import {
   OpportunityListingResp,
   OpportunityDetailsResp,
 } from '../../types/scraper.types';
 import { CreateOpportunityData } from '../../schemas/opportunity';
+import aiRouter from '../../constant/ai';
 
 export class OpportunityForAfricansScraper extends BaseScraper {
   scraperType = 'OPPORTUNITY_FOR_AFRICANS' as const;
@@ -62,18 +62,13 @@ export class OpportunityForAfricansScraper extends BaseScraper {
       }
 
       const markdownConversion = convertHtmlToMarkdown(data);
-
+      const prompt = extractOpportunityMetadataPrompt(markdownConversion);
       const result = await retry(
         async () => {
-          const aiResult = await geminiClient.models.generateContent({
-            model: GEMINI_MODEL,
-            contents: extractOpportunityMetadataPrompt(markdownConversion),
-            config: {
-              temperature: 0,
-            },
+          const aiResp = await aiRouter.generate({
+            prompt,
           });
 
-          const aiResp = aiResult.text || '';
           console.log({ aiResp });
           const cleanedResponse = this.cleanAIResponse(aiResp);
           return JSON.parse(cleanedResponse);
@@ -118,18 +113,13 @@ export class OpportunityForAfricansScraper extends BaseScraper {
     }
 
     const markdownConversion = convertHtmlToMarkdown(data);
+    const prompt = extractOpportunityDetailsPrompt(markdownConversion);
 
     const result = await retry(
       async () => {
-        const aiResult = await geminiClient.models.generateContent({
-          model: GEMINI_MODEL,
-          contents: extractOpportunityDetailsPrompt(markdownConversion),
-          config: {
-            temperature: 0,
-          },
+        const aiResp = await aiRouter.generate({
+          prompt,
         });
-
-        const aiResp = aiResult.text || '';
         const cleanedResponse = this.cleanAIResponse(aiResp);
         return JSON.parse(cleanedResponse);
       },
