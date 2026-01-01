@@ -1,0 +1,876 @@
+paths:
+  /api/ai-drafts:
+    get:
+      tags:
+        - AI Drafts
+      summary: Get AI drafts
+      description: Retrieve a paginated list of AI-generated opportunity drafts (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          example: 1
+        - name: limit
+          in: query
+          description: Number of AI drafts per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          example: 10
+        - name: search
+          in: query
+          description: Search term for title or organization
+          schema:
+            type: string
+          example: "software engineer"
+        - name: status
+          in: query
+          description: Filter by draft status
+          schema:
+            type: string
+            enum: [PENDING, APPROVED, REJECTED, PUBLISHED]
+          example: "PENDING"
+        - name: crawlSourceId
+          in: query
+          description: Filter by crawl source ID
+          schema:
+            type: string
+          example: "cm4crawl123"
+        - name: isDetailsCrawled
+          in: query
+          description: Filter by whether details were crawled
+          schema:
+            type: boolean
+          example: true
+        - name: sortBy
+          in: query
+          description: Sort field
+          schema:
+            type: string
+            enum: [createdAt, deadline, title, organization, status]
+            default: createdAt
+          example: "createdAt"
+        - name: sortOrder
+          in: query
+          description: Sort order
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+          example: "desc"
+      responses:
+        '200':
+          description: AI drafts retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AIDraftListResponse'
+              example:
+                success: true
+                message: "AI drafts retrieved successfully"
+                data:
+                  aiDrafts:
+                    - id: "cm4draft123"
+                      title: "Senior Software Engineer"
+                      organization: "TechCorp Inc"
+                      description: "Join our engineering team..."
+                      status: "PENDING"
+                      isDetailsCrawled: true
+                      deadline: "2025-01-15T00:00:00Z"
+                      sourceUrl: "https://example.com/job/123"
+                      crawlSourceId: "cm4crawl123"
+                      createdAt: "2025-12-17T22:30:00Z"
+                  pagination:
+                    page: 1
+                    limit: 10
+                    total: 15
+                    totalPages: 2
+                    hasNextPage: true
+                    hasPreviousPage: false
+                timestamp: "2025-12-17T22:30:00Z"
+                requestId: "req_123456789"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - AI Drafts
+      summary: Create AI draft
+      description: Create a new AI draft manually (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAIDraftRequest'
+            example:
+              title: "Senior Software Engineer"
+              organization: "TechCorp Inc"
+              description: "Join our engineering team to build amazing products..."
+              requirements: ["5+ years experience", "React expertise"]
+              benefits: ["Health insurance", "401k matching"]
+              compensation: "$120,000 - $150,000"
+              compensationType: "SALARY"
+              locations: ["San Francisco", "Remote"]
+              isRemote: true
+              deadline: "2025-01-15"
+              applicationUrl: "https://techcorp.com/apply"
+              contactEmail: "hr@techcorp.com"
+              experienceLevel: "senior"
+              duration: "Full-time"
+              eligibility: ["US work authorization required"]
+              sourceUrl: "https://techcorp.com/job/123"
+              isDetailsCrawled: false
+      responses:
+        '201':
+          description: AI draft created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AIDraft'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/ai-drafts/stats:
+    get:
+      tags:
+        - AI Drafts
+      summary: Get AI draft statistics
+      description: Retrieve statistics about AI drafts (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: AI draft statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AIDraftStats'
+              example:
+                success: true
+                message: "AI draft statistics retrieved successfully"
+                data:
+                  total: 150
+                  pending: 45
+                  approved: 75
+                  rejected: 20
+                  published: 10
+                  withDetails: 120
+                  withoutDetails: 30
+                  bySource:
+                    - crawlSourceId: "cm4crawl123"
+                      name: "OpportunityForAfricans"
+                      count: 85
+                    - crawlSourceId: "cm4crawl456"
+                      name: "Indeed Jobs"
+                      count: 65
+                timestamp: "2025-12-17T22:30:00Z"
+                requestId: "req_123456789"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/ai-drafts/{id}:
+    get:
+      tags:
+        - AI Drafts
+      summary: Get AI draft by ID
+      description: Retrieve detailed information about a specific AI draft (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: AI draft ID
+          schema:
+            type: string
+          example: "cm4draft123"
+      responses:
+        '200':
+          description: AI draft retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AIDraft'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: AI draft not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - AI Drafts
+      summary: Update AI draft
+      description: Update an existing AI draft (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: AI draft ID
+          schema:
+            type: string
+          example: "cm4draft123"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAIDraftRequest'
+            example:
+              title: "Updated Senior Software Engineer"
+              description: "Updated description..."
+              compensation: "$130,000 - $160,000"
+              deadline: "2025-01-20"
+      responses:
+        '200':
+          description: AI draft updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AIDraft'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: AI draft not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - AI Drafts
+      summary: Delete AI draft
+      description: Delete an AI draft (requires admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: AI draft ID
+          schema:
+            type: string
+          example: "cm4draft123"
+      responses:
+        '200':
+          description: AI draft deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: AI draft not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/ai-drafts/{id}/review:
+    patch:
+      tags:
+        - AI Drafts
+      summary: Review AI draft
+      description: Approve or reject an AI draft (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: AI draft ID
+          schema:
+            type: string
+          example: "cm4draft123"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewAIDraftRequest'
+            example:
+              status: "APPROVED"
+              reviewNotes: "Looks good, ready for publication"
+      responses:
+        '200':
+          description: AI draft reviewed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/AIDraft'
+        '400':
+          description: Validation error or invalid status transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: AI draft not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/ai-drafts/{id}/publish:
+    post:
+      tags:
+        - AI Drafts
+      summary: Publish AI draft
+      description: Convert an approved AI draft to a live opportunity (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: AI draft ID
+          schema:
+            type: string
+          example: "cm4draft123"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishAIDraftRequest'
+            example:
+              opportunityTypeIds: ["cm4type1", "cm4type2"]
+              author: "Admin"
+      responses:
+        '200':
+          description: AI draft published successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/PublishAIDraftResponse'
+              example:
+                success: true
+                message: "AI draft published successfully"
+                data:
+                  aiDraft:
+                    id: "cm4draft123"
+                    status: "PUBLISHED"
+                    publishedAt: "2025-12-17T22:30:00Z"
+                  opportunity:
+                    id: "cm4opp456"
+                    title: "Senior Software Engineer"
+                    organization: "TechCorp Inc"
+                    status: "ACTIVE"
+                    createdAt: "2025-12-17T22:30:00Z"
+                timestamp: "2025-12-17T22:30:00Z"
+                requestId: "req_123456789"
+        '400':
+          description: Validation error or draft not approved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: AI draft not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    AIDraft:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "cm4draft123"
+        title:
+          type: string
+          example: "Senior Software Engineer"
+        organization:
+          type: string
+          example: "TechCorp Inc"
+        description:
+          type: string
+          example: "Join our engineering team to build amazing products..."
+        requirements:
+          type: array
+          items:
+            type: string
+          example: ["5+ years experience", "React expertise", "Team leadership"]
+        benefits:
+          type: array
+          items:
+            type: string
+          example: ["Health insurance", "401k matching", "Flexible hours"]
+        compensation:
+          type: string
+          example: "$120,000 - $150,000"
+        compensationType:
+          type: string
+          enum: [SALARY, HOURLY, CONTRACT, STIPEND, UNPAID, UNKNOWN]
+          nullable: true
+          example: "SALARY"
+        locations:
+          type: array
+          items:
+            type: string
+          example: ["San Francisco", "Remote"]
+        isRemote:
+          type: boolean
+          example: true
+        deadline:
+          type: string
+          format: date-time
+          example: "2025-01-15T00:00:00Z"
+        applicationUrl:
+          type: string
+          nullable: true
+          example: "https://techcorp.com/apply"
+        contactEmail:
+          type: string
+          nullable: true
+          example: "hr@techcorp.com"
+        experienceLevel:
+          type: string
+          enum: [entry, mid, senior, executive, any]
+          example: "senior"
+        duration:
+          type: string
+          example: "Full-time"
+        eligibility:
+          type: array
+          items:
+            type: string
+          example: ["US work authorization required"]
+        status:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED, PUBLISHED]
+          example: "PENDING"
+        sourceUrl:
+          type: string
+          example: "https://example.com/job/123"
+        crawlSourceId:
+          type: string
+          nullable: true
+          example: "cm4crawl123"
+        isDetailsCrawled:
+          type: boolean
+          example: true
+        reviewNotes:
+          type: string
+          nullable: true
+          example: "Looks good, ready for publication"
+        publishedAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+        publishedOpportunityId:
+          type: string
+          nullable: true
+          example: null
+        rawScrapedData:
+          type: object
+          nullable: true
+          description: "Raw scraped data from the source"
+        rawData:
+          type: string
+          nullable: true
+          description: "JSON string of raw scraped data"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-12-17T22:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-12-17T22:30:00Z"
+        crawlSource:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            scraperType:
+              type: string
+
+    AIDraftListResponse:
+      type: object
+      properties:
+        aiDrafts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AIDraft'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    AIDraftStats:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 150
+        pending:
+          type: integer
+          example: 45
+        approved:
+          type: integer
+          example: 75
+        rejected:
+          type: integer
+          example: 20
+        published:
+          type: integer
+          example: 10
+        withDetails:
+          type: integer
+          example: 120
+        withoutDetails:
+          type: integer
+          example: 30
+        bySource:
+          type: array
+          items:
+            type: object
+            properties:
+              crawlSourceId:
+                type: string
+              name:
+                type: string
+              count:
+                type: integer
+          example:
+            - crawlSourceId: "cm4crawl123"
+              name: "OpportunityForAfricans"
+              count: 85
+
+    CreateAIDraftRequest:
+      type: object
+      required: [title, organization, description, deadline, sourceUrl]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          example: "Senior Software Engineer"
+        organization:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "TechCorp Inc"
+        description:
+          type: string
+          minLength: 10
+          example: "Join our engineering team to build amazing products..."
+        requirements:
+          type: array
+          items:
+            type: string
+          example: ["5+ years experience", "React expertise"]
+        benefits:
+          type: array
+          items:
+            type: string
+          example: ["Health insurance", "401k matching"]
+        compensation:
+          type: string
+          example: "$120,000 - $150,000"
+        compensationType:
+          type: string
+          enum: [SALARY, HOURLY, CONTRACT, STIPEND, UNPAID, UNKNOWN]
+          example: "SALARY"
+        locations:
+          type: array
+          items:
+            type: string
+          example: ["San Francisco", "Remote"]
+        isRemote:
+          type: boolean
+          example: true
+        deadline:
+          type: string
+          format: date
+          example: "2025-01-15"
+        applicationUrl:
+          type: string
+          format: uri
+          example: "https://techcorp.com/apply"
+        contactEmail:
+          type: string
+          format: email
+          example: "hr@techcorp.com"
+        experienceLevel:
+          type: string
+          enum: [entry, mid, senior, executive, any]
+          example: "senior"
+        duration:
+          type: string
+          example: "Full-time"
+        eligibility:
+          type: array
+          items:
+            type: string
+          example: ["US work authorization required"]
+        sourceUrl:
+          type: string
+          format: uri
+          example: "https://techcorp.com/job/123"
+        crawlSourceId:
+          type: string
+          example: "cm4crawl123"
+        isDetailsCrawled:
+          type: boolean
+          default: false
+          example: false
+
+    UpdateAIDraftRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        organization:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          minLength: 10
+        requirements:
+          type: array
+          items:
+            type: string
+        benefits:
+          type: array
+          items:
+            type: string
+        compensation:
+          type: string
+        compensationType:
+          type: string
+          enum: [SALARY, HOURLY, CONTRACT, STIPEND, UNPAID, UNKNOWN]
+        locations:
+          type: array
+          items:
+            type: string
+        isRemote:
+          type: boolean
+        deadline:
+          type: string
+          format: date
+        applicationUrl:
+          type: string
+          format: uri
+        contactEmail:
+          type: string
+          format: email
+        experienceLevel:
+          type: string
+          enum: [entry, mid, senior, executive, any]
+        duration:
+          type: string
+        eligibility:
+          type: array
+          items:
+            type: string
+
+    ReviewAIDraftRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [APPROVED, REJECTED]
+          example: "APPROVED"
+        reviewNotes:
+          type: string
+          example: "Looks good, ready for publication"
+
+    PublishAIDraftRequest:
+      type: object
+      properties:
+        opportunityTypeIds:
+          type: array
+          items:
+            type: string
+          example: ["cm4type1", "cm4type2"]
+        author:
+          type: string
+          example: "Admin"
+
+    PublishAIDraftResponse:
+      type: object
+      properties:
+        aiDraft:
+          type: object
+          properties:
+            id:
+              type: string
+            status:
+              type: string
+            publishedAt:
+              type: string
+              format: date-time
+        opportunity:
+          type: object
+          properties:
+            id:
+              type: string
+            title:
+              type: string
+            organization:
+              type: string
+            status:
+              type: string
+            createdAt:
+              type: string
+              format: date-time

@@ -351,6 +351,1663 @@
             "description": "Vector store health status"
           }
         }
+      },
+      "AIDraft": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "cm4draft123"
+          },
+          "title": {
+            "type": "string",
+            "example": "Senior Software Engineer"
+          },
+          "organization": {
+            "type": "string",
+            "example": "TechCorp Inc"
+          },
+          "description": {
+            "type": "string",
+            "example": "Join our engineering team to build amazing products..."
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "5+ years experience",
+              "React expertise",
+              "Team leadership"
+            ]
+          },
+          "benefits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Health insurance",
+              "401k matching",
+              "Flexible hours"
+            ]
+          },
+          "compensation": {
+            "type": "string",
+            "example": "$120,000 - $150,000"
+          },
+          "compensationType": {
+            "type": "string",
+            "enum": [
+              "SALARY",
+              "HOURLY",
+              "CONTRACT",
+              "STIPEND",
+              "UNPAID",
+              "UNKNOWN"
+            ],
+            "nullable": true,
+            "example": "SALARY"
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "San Francisco",
+              "Remote"
+            ]
+          },
+          "isRemote": {
+            "type": "boolean",
+            "example": true
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-01-15T00:00:00Z"
+          },
+          "applicationUrl": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://techcorp.com/apply"
+          },
+          "contactEmail": {
+            "type": "string",
+            "nullable": true,
+            "example": "hr@techcorp.com"
+          },
+          "experienceLevel": {
+            "type": "string",
+            "enum": [
+              "entry",
+              "mid",
+              "senior",
+              "executive",
+              "any"
+            ],
+            "example": "senior"
+          },
+          "duration": {
+            "type": "string",
+            "example": "Full-time"
+          },
+          "eligibility": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "US work authorization required"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "REJECTED",
+              "PUBLISHED"
+            ],
+            "example": "PENDING"
+          },
+          "sourceUrl": {
+            "type": "string",
+            "example": "https://example.com/job/123"
+          },
+          "crawlSourceId": {
+            "type": "string",
+            "nullable": true,
+            "example": "cm4crawl123"
+          },
+          "isDetailsCrawled": {
+            "type": "boolean",
+            "example": true
+          },
+          "reviewNotes": {
+            "type": "string",
+            "nullable": true,
+            "example": "Looks good, ready for publication"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "example": null
+          },
+          "publishedOpportunityId": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          },
+          "rawScrapedData": {
+            "type": "object",
+            "nullable": true,
+            "description": "Raw scraped data from the source"
+          },
+          "rawData": {
+            "type": "string",
+            "nullable": true,
+            "description": "JSON string of raw scraped data"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T22:30:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T22:30:00Z"
+          },
+          "crawlSource": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "scraperType": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "AIDraftListResponse": {
+        "type": "object",
+        "properties": {
+          "aiDrafts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AIDraft"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        }
+      },
+      "AIDraftStats": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "example": 150
+          },
+          "pending": {
+            "type": "integer",
+            "example": 45
+          },
+          "approved": {
+            "type": "integer",
+            "example": 75
+          },
+          "rejected": {
+            "type": "integer",
+            "example": 20
+          },
+          "published": {
+            "type": "integer",
+            "example": 10
+          },
+          "withDetails": {
+            "type": "integer",
+            "example": 120
+          },
+          "withoutDetails": {
+            "type": "integer",
+            "example": 30
+          },
+          "bySource": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "crawlSourceId": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              }
+            },
+            "example": [
+              {
+                "crawlSourceId": "cm4crawl123",
+                "name": "OpportunityForAfricans",
+                "count": 85
+              }
+            ]
+          }
+        }
+      },
+      "CreateAIDraftRequest": {
+        "type": "object",
+        "required": [
+          "title",
+          "organization",
+          "description",
+          "deadline",
+          "sourceUrl"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "Senior Software Engineer"
+          },
+          "organization": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "TechCorp Inc"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "example": "Join our engineering team to build amazing products..."
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "5+ years experience",
+              "React expertise"
+            ]
+          },
+          "benefits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Health insurance",
+              "401k matching"
+            ]
+          },
+          "compensation": {
+            "type": "string",
+            "example": "$120,000 - $150,000"
+          },
+          "compensationType": {
+            "type": "string",
+            "enum": [
+              "SALARY",
+              "HOURLY",
+              "CONTRACT",
+              "STIPEND",
+              "UNPAID",
+              "UNKNOWN"
+            ],
+            "example": "SALARY"
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "San Francisco",
+              "Remote"
+            ]
+          },
+          "isRemote": {
+            "type": "boolean",
+            "example": true
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-01-15"
+          },
+          "applicationUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://techcorp.com/apply"
+          },
+          "contactEmail": {
+            "type": "string",
+            "format": "email",
+            "example": "hr@techcorp.com"
+          },
+          "experienceLevel": {
+            "type": "string",
+            "enum": [
+              "entry",
+              "mid",
+              "senior",
+              "executive",
+              "any"
+            ],
+            "example": "senior"
+          },
+          "duration": {
+            "type": "string",
+            "example": "Full-time"
+          },
+          "eligibility": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "US work authorization required"
+            ]
+          },
+          "sourceUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://techcorp.com/job/123"
+          },
+          "crawlSourceId": {
+            "type": "string",
+            "example": "cm4crawl123"
+          },
+          "isDetailsCrawled": {
+            "type": "boolean",
+            "default": false,
+            "example": false
+          }
+        }
+      },
+      "UpdateAIDraftRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "organization": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "benefits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "compensation": {
+            "type": "string"
+          },
+          "compensationType": {
+            "type": "string",
+            "enum": [
+              "SALARY",
+              "HOURLY",
+              "CONTRACT",
+              "STIPEND",
+              "UNPAID",
+              "UNKNOWN"
+            ]
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isRemote": {
+            "type": "boolean"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date"
+          },
+          "applicationUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "contactEmail": {
+            "type": "string",
+            "format": "email"
+          },
+          "experienceLevel": {
+            "type": "string",
+            "enum": [
+              "entry",
+              "mid",
+              "senior",
+              "executive",
+              "any"
+            ]
+          },
+          "duration": {
+            "type": "string"
+          },
+          "eligibility": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ReviewAIDraftRequest": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "REJECTED"
+            ],
+            "example": "APPROVED"
+          },
+          "reviewNotes": {
+            "type": "string",
+            "example": "Looks good, ready for publication"
+          }
+        }
+      },
+      "PublishAIDraftRequest": {
+        "type": "object",
+        "properties": {
+          "opportunityTypeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "cm4type1",
+              "cm4type2"
+            ]
+          },
+          "author": {
+            "type": "string",
+            "example": "Admin"
+          }
+        }
+      },
+      "PublishAIDraftResponse": {
+        "type": "object",
+        "properties": {
+          "aiDraft": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "publishedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "opportunity": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "organization": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "CrawlSource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "cm4crawl123"
+          },
+          "name": {
+            "type": "string",
+            "example": "OpportunityForAfricans Daily Crawl"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://opportunitiesforafricans.com/opportunities"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "DAILY",
+              "WEEKLY",
+              "MONTHLY"
+            ],
+            "example": "DAILY"
+          },
+          "scraperType": {
+            "type": "string",
+            "enum": [
+              "OPPORTUNITY_FOR_AFRICANS",
+              "INDEED",
+              "LINKEDIN"
+            ],
+            "example": "OPPORTUNITY_FOR_AFRICANS"
+          },
+          "cssSelectors": {
+            "type": "object",
+            "nullable": true,
+            "example": {}
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "ERROR"
+            ],
+            "example": "ACTIVE"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
+          },
+          "isDetailsCrawled": {
+            "type": "boolean",
+            "example": true
+          },
+          "opportunitiesFound": {
+            "type": "integer",
+            "nullable": true,
+            "example": 127
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          },
+          "lastCrawledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2025-12-17T22:30:00Z"
+          },
+          "nextCrawlAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-18T22:30:00Z"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T22:30:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T22:30:00Z"
+          }
+        }
+      },
+      "CrawlSourceListResponse": {
+        "type": "object",
+        "properties": {
+          "crawlSources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrawlSource"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        }
+      },
+      "CreateCrawlSourceRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "url",
+          "frequency",
+          "scraperType"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "OpportunityForAfricans Daily Crawl"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://opportunitiesforafricans.com/opportunities"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "DAILY",
+              "WEEKLY",
+              "MONTHLY"
+            ],
+            "example": "DAILY"
+          },
+          "scraperType": {
+            "type": "string",
+            "enum": [
+              "OPPORTUNITY_FOR_AFRICANS",
+              "INDEED",
+              "LINKEDIN"
+            ],
+            "example": "OPPORTUNITY_FOR_AFRICANS"
+          },
+          "cssSelectors": {
+            "type": "object",
+            "nullable": true,
+            "example": {}
+          },
+          "isDetailsCrawled": {
+            "type": "boolean",
+            "default": true,
+            "example": true
+          }
+        }
+      },
+      "UpdateCrawlSourceRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "DAILY",
+              "WEEKLY",
+              "MONTHLY"
+            ]
+          },
+          "scraperType": {
+            "type": "string",
+            "enum": [
+              "OPPORTUNITY_FOR_AFRICANS",
+              "INDEED",
+              "LINKEDIN"
+            ]
+          },
+          "cssSelectors": {
+            "type": "object",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isDetailsCrawled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CrawlTriggerResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Crawl job queued successfully. Processing will begin shortly."
+          },
+          "jobId": {
+            "type": "string",
+            "example": "15"
+          }
+        }
+      },
+      "QueueStatus": {
+        "type": "object",
+        "properties": {
+          "listing": {
+            "type": "object",
+            "properties": {
+              "waiting": {
+                "type": "integer",
+                "description": "Number of jobs waiting in the listing queue",
+                "example": 5
+              },
+              "active": {
+                "type": "integer",
+                "description": "Number of jobs currently being processed in the listing queue",
+                "example": 2
+              },
+              "completed": {
+                "type": "integer",
+                "description": "Number of completed listing jobs",
+                "example": 123
+              },
+              "failed": {
+                "type": "integer",
+                "description": "Number of failed listing jobs",
+                "example": 3
+              }
+            }
+          },
+          "details": {
+            "type": "object",
+            "properties": {
+              "waiting": {
+                "type": "integer",
+                "description": "Number of jobs waiting in the details queue",
+                "example": 12
+              },
+              "active": {
+                "type": "integer",
+                "description": "Number of jobs currently being processed in the details queue",
+                "example": 8
+              },
+              "completed": {
+                "type": "integer",
+                "description": "Number of completed details jobs",
+                "example": 456
+              },
+              "failed": {
+                "type": "integer",
+                "description": "Number of failed details jobs",
+                "example": 7
+              }
+            }
+          }
+        }
+      },
+      "OnboardingStatus": {
+        "type": "object",
+        "properties": {
+          "isOnboarded": {
+            "type": "boolean",
+            "example": false
+          },
+          "currentStep": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2,
+            "example": 1
+          },
+          "completedSteps": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "example": []
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "cm4user123"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "user@example.com"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "jobFunction": {
+                "type": "string",
+                "nullable": true,
+                "example": null
+              },
+              "preferredLocations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": []
+              },
+              "workAuthorization": {
+                "type": "string",
+                "nullable": true,
+                "enum": [
+                  "US_CITIZEN",
+                  "PERMANENT_RESIDENT",
+                  "H1B_VISA",
+                  "F1_STUDENT",
+                  "OTHER"
+                ],
+                "example": null
+              },
+              "remoteWork": {
+                "type": "boolean",
+                "example": false
+              },
+              "resumeUrl": {
+                "type": "string",
+                "nullable": true,
+                "example": null
+              }
+            }
+          }
+        }
+      },
+      "OnboardingStepOneRequest": {
+        "type": "object",
+        "required": [
+          "jobFunction",
+          "preferredLocations",
+          "workAuthorization",
+          "remoteWork"
+        ],
+        "properties": {
+          "jobFunction": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Software Engineering"
+          },
+          "preferredLocations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "example": [
+              "San Francisco",
+              "Remote",
+              "New York"
+            ]
+          },
+          "workAuthorization": {
+            "type": "string",
+            "enum": [
+              "US_CITIZEN",
+              "PERMANENT_RESIDENT",
+              "H1B_VISA",
+              "F1_STUDENT",
+              "OTHER"
+            ],
+            "example": "US_CITIZEN"
+          },
+          "remoteWork": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "OnboardingStepTwoRequest": {
+        "type": "object",
+        "required": [
+          "resumeUrl"
+        ],
+        "properties": {
+          "resumeUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/resume.pdf"
+          }
+        }
+      },
+      "CompleteOnboardingRequest": {
+        "type": "object",
+        "required": [
+          "jobFunction",
+          "preferredLocations",
+          "workAuthorization",
+          "remoteWork",
+          "resumeUrl"
+        ],
+        "properties": {
+          "jobFunction": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Software Engineering"
+          },
+          "preferredLocations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "example": [
+              "San Francisco",
+              "Remote",
+              "New York"
+            ]
+          },
+          "workAuthorization": {
+            "type": "string",
+            "enum": [
+              "US_CITIZEN",
+              "PERMANENT_RESIDENT",
+              "H1B_VISA",
+              "F1_STUDENT",
+              "OTHER"
+            ],
+            "example": "US_CITIZEN"
+          },
+          "remoteWork": {
+            "type": "boolean",
+            "example": true
+          },
+          "resumeUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/resume.pdf"
+          }
+        }
+      },
+      "OnboardingStepResponse": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "integer",
+            "example": 1
+          },
+          "completed": {
+            "type": "boolean",
+            "example": true
+          },
+          "nextStep": {
+            "type": "integer",
+            "nullable": true,
+            "example": 2
+          },
+          "user": {
+            "type": "object",
+            "description": "Updated user profile data"
+          }
+        }
+      },
+      "CompleteOnboardingResponse": {
+        "type": "object",
+        "properties": {
+          "isOnboarded": {
+            "type": "boolean",
+            "example": true
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T22:30:00Z"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "SkipOnboardingResponse": {
+        "type": "object",
+        "properties": {
+          "isOnboarded": {
+            "type": "boolean",
+            "example": true
+          },
+          "skippedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T22:30:00Z"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "cm4user123"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "user@example.com"
+              },
+              "name": {
+                "type": "string",
+                "example": "John Doe"
+              },
+              "isOnboarded": {
+                "type": "boolean",
+                "example": true
+              }
+            }
+          }
+        }
+      },
+      "Opportunity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "cm4xyz123"
+          },
+          "title": {
+            "type": "string",
+            "example": "Senior Software Engineer"
+          },
+          "organization": {
+            "type": "string",
+            "example": "TechCorp Inc"
+          },
+          "description": {
+            "type": "string",
+            "example": "Join our engineering team to build amazing products..."
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "5+ years experience",
+              "React expertise",
+              "Team leadership"
+            ]
+          },
+          "benefits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Health insurance",
+              "401k matching",
+              "Flexible hours"
+            ]
+          },
+          "compensation": {
+            "type": "string",
+            "example": "$120,000 - $150,000"
+          },
+          "compensationType": {
+            "type": "string",
+            "enum": [
+              "SALARY",
+              "HOURLY",
+              "CONTRACT",
+              "STIPEND",
+              "UNPAID",
+              "UNKNOWN"
+            ],
+            "example": "SALARY"
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "San Francisco",
+              "Remote"
+            ]
+          },
+          "isRemote": {
+            "type": "boolean",
+            "example": true
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-01-15T00:00:00Z"
+          },
+          "applicationUrl": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://techcorp.com/apply"
+          },
+          "contactEmail": {
+            "type": "string",
+            "nullable": true,
+            "example": "hr@techcorp.com"
+          },
+          "experienceLevel": {
+            "type": "string",
+            "enum": [
+              "entry",
+              "mid",
+              "senior",
+              "executive",
+              "any"
+            ],
+            "example": "senior"
+          },
+          "duration": {
+            "type": "string",
+            "example": "Full-time"
+          },
+          "eligibility": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "US work authorization required"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "ACTIVE",
+              "PAUSED",
+              "CLOSED",
+              "ARCHIVED"
+            ],
+            "example": "ACTIVE"
+          },
+          "author": {
+            "type": "string",
+            "example": "System"
+          },
+          "opportunityCategories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "opportunityType": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T22:30:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T22:30:00Z"
+          }
+        }
+      },
+      "OpportunityListResponse": {
+        "type": "object",
+        "properties": {
+          "opportunities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Opportunity"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        }
+      },
+      "CreateOpportunityRequest": {
+        "type": "object",
+        "required": [
+          "title",
+          "organization",
+          "description",
+          "deadline",
+          "opportunityTypeIds"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200,
+            "example": "Senior Software Engineer"
+          },
+          "organization": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "TechCorp Inc"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "example": "Join our engineering team to build amazing products..."
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "5+ years experience",
+              "React expertise"
+            ]
+          },
+          "benefits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Health insurance",
+              "401k matching"
+            ]
+          },
+          "compensation": {
+            "type": "string",
+            "example": "$120,000 - $150,000"
+          },
+          "compensationType": {
+            "type": "string",
+            "enum": [
+              "SALARY",
+              "HOURLY",
+              "CONTRACT",
+              "STIPEND",
+              "UNPAID",
+              "UNKNOWN"
+            ],
+            "example": "SALARY"
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "San Francisco",
+              "Remote"
+            ]
+          },
+          "isRemote": {
+            "type": "boolean",
+            "example": true
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-01-15"
+          },
+          "applicationUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://techcorp.com/apply"
+          },
+          "contactEmail": {
+            "type": "string",
+            "format": "email",
+            "example": "hr@techcorp.com"
+          },
+          "experienceLevel": {
+            "type": "string",
+            "enum": [
+              "entry",
+              "mid",
+              "senior",
+              "executive",
+              "any"
+            ],
+            "example": "senior"
+          },
+          "duration": {
+            "type": "string",
+            "example": "Full-time"
+          },
+          "eligibility": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "US work authorization required"
+            ]
+          },
+          "opportunityTypeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "example": [
+              "cm4type1",
+              "cm4type2"
+            ]
+          },
+          "author": {
+            "type": "string",
+            "example": "Admin"
+          }
+        }
+      },
+      "UpdateOpportunityRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "organization": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "benefits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "compensation": {
+            "type": "string"
+          },
+          "compensationType": {
+            "type": "string",
+            "enum": [
+              "SALARY",
+              "HOURLY",
+              "CONTRACT",
+              "STIPEND",
+              "UNPAID",
+              "UNKNOWN"
+            ]
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isRemote": {
+            "type": "boolean"
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date"
+          },
+          "applicationUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "contactEmail": {
+            "type": "string",
+            "format": "email"
+          },
+          "experienceLevel": {
+            "type": "string",
+            "enum": [
+              "entry",
+              "mid",
+              "senior",
+              "executive",
+              "any"
+            ]
+          },
+          "duration": {
+            "type": "string"
+          },
+          "eligibility": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "opportunityTypeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "author": {
+            "type": "string"
+          }
+        }
+      },
+      "SaveJobRequest": {
+        "type": "object",
+        "required": [
+          "opportunityId"
+        ],
+        "properties": {
+          "opportunityId": {
+            "type": "string",
+            "example": "cm4xyz123"
+          }
+        }
+      },
+      "SavedJob": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "cm4save123"
+          },
+          "userId": {
+            "type": "string",
+            "example": "cm4user123"
+          },
+          "opportunityId": {
+            "type": "string",
+            "example": "cm4xyz123"
+          },
+          "opportunity": {
+            "$ref": "#/components/schemas/Opportunity"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T22:30:00Z"
+          }
+        }
+      },
+      "SavedJobListResponse": {
+        "type": "object",
+        "properties": {
+          "savedJobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SavedJob"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        }
+      },
+      "ApplyToOpportunityRequest": {
+        "type": "object",
+        "required": [
+          "opportunityId"
+        ],
+        "properties": {
+          "opportunityId": {
+            "type": "string",
+            "example": "cm4xyz123"
+          },
+          "coverLetter": {
+            "type": "string",
+            "example": "I am excited to apply for this position..."
+          },
+          "resumeUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/resume.pdf"
+          }
+        }
+      },
+      "Application": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "cm4app123"
+          },
+          "userId": {
+            "type": "string",
+            "example": "cm4user123"
+          },
+          "opportunityId": {
+            "type": "string",
+            "example": "cm4xyz123"
+          },
+          "coverLetter": {
+            "type": "string",
+            "nullable": true,
+            "example": "I am excited to apply for this position..."
+          },
+          "resumeUrl": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://example.com/resume.pdf"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "REVIEWED",
+              "INTERVIEWED",
+              "REJECTED",
+              "ACCEPTED",
+              "WITHDRAWN"
+            ],
+            "example": "PENDING"
+          },
+          "appliedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T22:30:00Z"
+          },
+          "opportunity": {
+            "$ref": "#/components/schemas/Opportunity"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T22:30:00Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-17T22:30:00Z"
+          }
+        }
+      },
+      "ApplicationListResponse": {
+        "type": "object",
+        "properties": {
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Application"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        }
+      },
+      "UpdateApplicationRequest": {
+        "type": "object",
+        "properties": {
+          "coverLetter": {
+            "type": "string",
+            "example": "Updated cover letter content..."
+          },
+          "resumeUrl": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://example.com/updated-resume.pdf"
+          }
+        }
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "example": 10
+          },
+          "total": {
+            "type": "integer",
+            "example": 25
+          },
+          "totalPages": {
+            "type": "integer",
+            "example": 3
+          },
+          "hasNextPage": {
+            "type": "boolean",
+            "example": true
+          },
+          "hasPreviousPage": {
+            "type": "boolean",
+            "example": false
+          }
+        }
       }
     }
   },
@@ -770,6 +2427,864 @@
         }
       }
     },
+    "/api/ai-drafts": {
+      "get": {
+        "tags": [
+          "AI Drafts"
+        ],
+        "summary": "Get AI drafts",
+        "description": "Retrieve a paginated list of AI-generated opportunity drafts (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "example": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of AI drafts per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            "example": 10
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term for title or organization",
+            "schema": {
+              "type": "string"
+            },
+            "example": "software engineer"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by draft status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "APPROVED",
+                "REJECTED",
+                "PUBLISHED"
+              ]
+            },
+            "example": "PENDING"
+          },
+          {
+            "name": "crawlSourceId",
+            "in": "query",
+            "description": "Filter by crawl source ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4crawl123"
+          },
+          {
+            "name": "isDetailsCrawled",
+            "in": "query",
+            "description": "Filter by whether details were crawled",
+            "schema": {
+              "type": "boolean"
+            },
+            "example": true
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort field",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "createdAt",
+                "deadline",
+                "title",
+                "organization",
+                "status"
+              ],
+              "default": "createdAt"
+            },
+            "example": "createdAt"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "description": "Sort order",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            },
+            "example": "desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AI drafts retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/AIDraftListResponse"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "AI drafts retrieved successfully",
+                  "data": {
+                    "aiDrafts": [
+                      {
+                        "id": "cm4draft123",
+                        "title": "Senior Software Engineer",
+                        "organization": "TechCorp Inc",
+                        "description": "Join our engineering team...",
+                        "status": "PENDING",
+                        "isDetailsCrawled": true,
+                        "deadline": "2025-01-15T00:00:00Z",
+                        "sourceUrl": "https://example.com/job/123",
+                        "crawlSourceId": "cm4crawl123",
+                        "createdAt": "2025-12-17T22:30:00Z"
+                      }
+                    ],
+                    "pagination": {
+                      "page": 1,
+                      "limit": 10,
+                      "total": 15,
+                      "totalPages": 2,
+                      "hasNextPage": true,
+                      "hasPreviousPage": false
+                    }
+                  },
+                  "timestamp": "2025-12-17T22:30:00Z",
+                  "requestId": "req_123456789"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AI Drafts"
+        ],
+        "summary": "Create AI draft",
+        "description": "Create a new AI draft manually (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAIDraftRequest"
+              },
+              "example": {
+                "title": "Senior Software Engineer",
+                "organization": "TechCorp Inc",
+                "description": "Join our engineering team to build amazing products...",
+                "requirements": [
+                  "5+ years experience",
+                  "React expertise"
+                ],
+                "benefits": [
+                  "Health insurance",
+                  "401k matching"
+                ],
+                "compensation": "$120,000 - $150,000",
+                "compensationType": "SALARY",
+                "locations": [
+                  "San Francisco",
+                  "Remote"
+                ],
+                "isRemote": true,
+                "deadline": "2025-01-15",
+                "applicationUrl": "https://techcorp.com/apply",
+                "contactEmail": "hr@techcorp.com",
+                "experienceLevel": "senior",
+                "duration": "Full-time",
+                "eligibility": [
+                  "US work authorization required"
+                ],
+                "sourceUrl": "https://techcorp.com/job/123",
+                "isDetailsCrawled": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "AI draft created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/AIDraft"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai-drafts/stats": {
+      "get": {
+        "tags": [
+          "AI Drafts"
+        ],
+        "summary": "Get AI draft statistics",
+        "description": "Retrieve statistics about AI drafts (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AI draft statistics retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/AIDraftStats"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "AI draft statistics retrieved successfully",
+                  "data": {
+                    "total": 150,
+                    "pending": 45,
+                    "approved": 75,
+                    "rejected": 20,
+                    "published": 10,
+                    "withDetails": 120,
+                    "withoutDetails": 30,
+                    "bySource": [
+                      {
+                        "crawlSourceId": "cm4crawl123",
+                        "name": "OpportunityForAfricans",
+                        "count": 85
+                      },
+                      {
+                        "crawlSourceId": "cm4crawl456",
+                        "name": "Indeed Jobs",
+                        "count": 65
+                      }
+                    ]
+                  },
+                  "timestamp": "2025-12-17T22:30:00Z",
+                  "requestId": "req_123456789"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai-drafts/{id}": {
+      "get": {
+        "tags": [
+          "AI Drafts"
+        ],
+        "summary": "Get AI draft by ID",
+        "description": "Retrieve detailed information about a specific AI draft (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "AI draft ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4draft123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AI draft retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/AIDraft"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "AI draft not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AI Drafts"
+        ],
+        "summary": "Update AI draft",
+        "description": "Update an existing AI draft (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "AI draft ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4draft123"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAIDraftRequest"
+              },
+              "example": {
+                "title": "Updated Senior Software Engineer",
+                "description": "Updated description...",
+                "compensation": "$130,000 - $160,000",
+                "deadline": "2025-01-20"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AI draft updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/AIDraft"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "AI draft not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AI Drafts"
+        ],
+        "summary": "Delete AI draft",
+        "description": "Delete an AI draft (requires admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "AI draft ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4draft123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AI draft deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "AI draft not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai-drafts/{id}/review": {
+      "patch": {
+        "tags": [
+          "AI Drafts"
+        ],
+        "summary": "Review AI draft",
+        "description": "Approve or reject an AI draft (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "AI draft ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4draft123"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewAIDraftRequest"
+              },
+              "example": {
+                "status": "APPROVED",
+                "reviewNotes": "Looks good, ready for publication"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AI draft reviewed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/AIDraft"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or invalid status transition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "AI draft not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai-drafts/{id}/publish": {
+      "post": {
+        "tags": [
+          "AI Drafts"
+        ],
+        "summary": "Publish AI draft",
+        "description": "Convert an approved AI draft to a live opportunity (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "AI draft ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4draft123"
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublishAIDraftRequest"
+              },
+              "example": {
+                "opportunityTypeIds": [
+                  "cm4type1",
+                  "cm4type2"
+                ],
+                "author": "Admin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AI draft published successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PublishAIDraftResponse"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "AI draft published successfully",
+                  "data": {
+                    "aiDraft": {
+                      "id": "cm4draft123",
+                      "status": "PUBLISHED",
+                      "publishedAt": "2025-12-17T22:30:00Z"
+                    },
+                    "opportunity": {
+                      "id": "cm4opp456",
+                      "title": "Senior Software Engineer",
+                      "organization": "TechCorp Inc",
+                      "status": "ACTIVE",
+                      "createdAt": "2025-12-17T22:30:00Z"
+                    }
+                  },
+                  "timestamp": "2025-12-17T22:30:00Z",
+                  "requestId": "req_123456789"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or draft not approved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "AI draft not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/register": {
       "post": {
         "tags": [
@@ -1071,6 +3586,2306 @@
                   "code": "UNAUTHORIZED",
                   "timestamp": "2025-12-17T22:30:00Z",
                   "requestId": "req_123456789"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/crawl-sources": {
+      "get": {
+        "tags": [
+          "Crawl Sources"
+        ],
+        "summary": "Get crawl sources",
+        "description": "Retrieve a paginated list of crawl sources (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "example": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of crawl sources per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            "example": 10
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term for name or URL",
+            "schema": {
+              "type": "string"
+            },
+            "example": "opportunity"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by crawl status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "INACTIVE",
+                "ERROR"
+              ]
+            },
+            "example": "ACTIVE"
+          },
+          {
+            "name": "frequency",
+            "in": "query",
+            "description": "Filter by crawl frequency",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DAILY",
+                "WEEKLY",
+                "MONTHLY"
+              ]
+            },
+            "example": "DAILY"
+          },
+          {
+            "name": "isActive",
+            "in": "query",
+            "description": "Filter by active status",
+            "schema": {
+              "type": "boolean"
+            },
+            "example": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Crawl sources retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CrawlSourceListResponse"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Crawl sources retrieved successfully",
+                  "data": {
+                    "crawlSources": [
+                      {
+                        "id": "cm4crawl123",
+                        "name": "OpportunityForAfricans Daily Crawl",
+                        "url": "https://opportunitiesforafricans.com/opportunities",
+                        "frequency": "DAILY",
+                        "scraperType": "OPPORTUNITY_FOR_AFRICANS",
+                        "status": "ACTIVE",
+                        "isActive": true,
+                        "isDetailsCrawled": true,
+                        "opportunitiesFound": 127,
+                        "lastCrawledAt": "2025-12-17T22:30:00Z",
+                        "nextCrawlAt": "2025-12-18T22:30:00Z",
+                        "createdAt": "2025-12-17T22:30:00Z"
+                      }
+                    ],
+                    "pagination": {
+                      "page": 1,
+                      "limit": 10,
+                      "total": 5,
+                      "totalPages": 1,
+                      "hasNextPage": false,
+                      "hasPreviousPage": false
+                    }
+                  },
+                  "timestamp": "2025-12-17T22:30:00Z",
+                  "requestId": "req_123456789"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Crawl Sources"
+        ],
+        "summary": "Create crawl source",
+        "description": "Create a new crawl source (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCrawlSourceRequest"
+              },
+              "example": {
+                "name": "OpportunityForAfricans Daily Crawl",
+                "url": "https://opportunitiesforafricans.com/opportunities",
+                "frequency": "DAILY",
+                "scraperType": "OPPORTUNITY_FOR_AFRICANS",
+                "cssSelectors": {},
+                "isDetailsCrawled": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Crawl source created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CrawlSource"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "URL already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/crawl-sources/{id}": {
+      "get": {
+        "tags": [
+          "Crawl Sources"
+        ],
+        "summary": "Get crawl source by ID",
+        "description": "Retrieve detailed information about a specific crawl source (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Crawl source ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4crawl123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Crawl source retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CrawlSource"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Crawl source not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Crawl Sources"
+        ],
+        "summary": "Update crawl source",
+        "description": "Update an existing crawl source (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Crawl source ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4crawl123"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCrawlSourceRequest"
+              },
+              "example": {
+                "name": "Updated Crawl Source Name",
+                "frequency": "WEEKLY",
+                "isActive": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Crawl source updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CrawlSource"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Crawl source not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Crawl Sources"
+        ],
+        "summary": "Delete crawl source",
+        "description": "Delete a crawl source (requires admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Crawl source ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4crawl123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Crawl source deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Crawl source not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/crawl-sources/{id}/trigger": {
+      "post": {
+        "tags": [
+          "Crawl Sources"
+        ],
+        "summary": "Trigger crawl",
+        "description": "Manually trigger a crawl for a specific crawl source (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Crawl source ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4crawl123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Crawl triggered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CrawlTriggerResponse"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Crawl job queued successfully. Processing will begin shortly.",
+                  "data": {
+                    "message": "Crawl job queued successfully. Processing will begin shortly.",
+                    "jobId": "15"
+                  },
+                  "timestamp": "2025-12-17T22:30:00Z",
+                  "requestId": "req_123456789"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Crawl source not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Crawl source is not active",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/crawl-sources/queue/status": {
+      "get": {
+        "tags": [
+          "Crawl Queue"
+        ],
+        "summary": "Get crawl queue status",
+        "description": "Retrieve current status and metrics for crawl queues (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Queue status retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/QueueStatus"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Queue status retrieved successfully",
+                  "data": {
+                    "listing": {
+                      "waiting": 5,
+                      "active": 2,
+                      "completed": 123,
+                      "failed": 3
+                    },
+                    "details": {
+                      "waiting": 12,
+                      "active": 8,
+                      "completed": 456,
+                      "failed": 7
+                    }
+                  },
+                  "timestamp": "2025-12-17T22:30:00Z",
+                  "requestId": "req_123456789"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/onboarding/status": {
+      "get": {
+        "tags": [
+          "Onboarding"
+        ],
+        "summary": "Get onboarding status",
+        "description": "Retrieve the current user's onboarding status and progress",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Onboarding status retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OnboardingStatus"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Onboarding status retrieved successfully",
+                  "data": {
+                    "isOnboarded": false,
+                    "currentStep": 1,
+                    "completedSteps": [],
+                    "user": {
+                      "id": "cm4user123",
+                      "email": "user@example.com",
+                      "name": "John Doe",
+                      "jobFunction": null,
+                      "preferredLocations": [],
+                      "workAuthorization": null,
+                      "remoteWork": false,
+                      "resumeUrl": null
+                    }
+                  },
+                  "timestamp": "2025-12-17T22:30:00Z",
+                  "requestId": "req_123456789"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/onboarding/step-one": {
+      "put": {
+        "tags": [
+          "Onboarding"
+        ],
+        "summary": "Update onboarding step 1",
+        "description": "Update user's job preferences (step 1 of onboarding)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnboardingStepOneRequest"
+              },
+              "example": {
+                "jobFunction": "Software Engineering",
+                "preferredLocations": [
+                  "San Francisco",
+                  "Remote",
+                  "New York"
+                ],
+                "workAuthorization": "US_CITIZEN",
+                "remoteWork": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Step 1 completed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OnboardingStepResponse"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Step 1 completed successfully",
+                  "data": {
+                    "step": 1,
+                    "completed": true,
+                    "nextStep": 2,
+                    "user": {
+                      "id": "cm4user123",
+                      "jobFunction": "Software Engineering",
+                      "preferredLocations": [
+                        "San Francisco",
+                        "Remote",
+                        "New York"
+                      ],
+                      "workAuthorization": "US_CITIZEN",
+                      "remoteWork": true
+                    }
+                  },
+                  "timestamp": "2025-12-17T22:30:00Z",
+                  "requestId": "req_123456789"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/onboarding/step-two": {
+      "put": {
+        "tags": [
+          "Onboarding"
+        ],
+        "summary": "Update onboarding step 2",
+        "description": "Update user's resume information (step 2 of onboarding)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnboardingStepTwoRequest"
+              },
+              "example": {
+                "resumeUrl": "https://example.com/resume.pdf"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Step 2 completed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OnboardingStepResponse"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Step 2 completed successfully",
+                  "data": {
+                    "step": 2,
+                    "completed": true,
+                    "nextStep": null,
+                    "user": {
+                      "id": "cm4user123",
+                      "resumeUrl": "https://example.com/resume.pdf",
+                      "isOnboarded": true
+                    }
+                  },
+                  "timestamp": "2025-12-17T22:30:00Z",
+                  "requestId": "req_123456789"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/onboarding/complete": {
+      "post": {
+        "tags": [
+          "Onboarding"
+        ],
+        "summary": "Complete onboarding",
+        "description": "Complete all onboarding steps at once with comprehensive user profile data",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteOnboardingRequest"
+              },
+              "example": {
+                "jobFunction": "Software Engineering",
+                "preferredLocations": [
+                  "San Francisco",
+                  "Remote",
+                  "New York"
+                ],
+                "workAuthorization": "US_CITIZEN",
+                "remoteWork": true,
+                "resumeUrl": "https://example.com/resume.pdf"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Onboarding completed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CompleteOnboardingResponse"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Onboarding completed successfully",
+                  "data": {
+                    "isOnboarded": true,
+                    "completedAt": "2025-12-17T22:30:00Z",
+                    "user": {
+                      "id": "cm4user123",
+                      "email": "user@example.com",
+                      "name": "John Doe",
+                      "jobFunction": "Software Engineering",
+                      "preferredLocations": [
+                        "San Francisco",
+                        "Remote",
+                        "New York"
+                      ],
+                      "workAuthorization": "US_CITIZEN",
+                      "remoteWork": true,
+                      "resumeUrl": "https://example.com/resume.pdf",
+                      "isOnboarded": true
+                    }
+                  },
+                  "timestamp": "2025-12-17T22:30:00Z",
+                  "requestId": "req_123456789"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/onboarding/skip": {
+      "post": {
+        "tags": [
+          "Onboarding"
+        ],
+        "summary": "Skip onboarding",
+        "description": "Skip the onboarding process and mark user as onboarded",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Onboarding skipped successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/SkipOnboardingResponse"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Onboarding skipped successfully",
+                  "data": {
+                    "isOnboarded": true,
+                    "skippedAt": "2025-12-17T22:30:00Z",
+                    "user": {
+                      "id": "cm4user123",
+                      "email": "user@example.com",
+                      "name": "John Doe",
+                      "isOnboarded": true
+                    }
+                  },
+                  "timestamp": "2025-12-17T22:30:00Z",
+                  "requestId": "req_123456789"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User already onboarded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/opportunities": {
+      "get": {
+        "tags": [
+          "Opportunities"
+        ],
+        "summary": "Get opportunities",
+        "description": "Retrieve a paginated list of available opportunities with filtering options",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "example": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of opportunities per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            "example": 10
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term for title or description",
+            "schema": {
+              "type": "string"
+            },
+            "example": "software engineer"
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "description": "Filter by location",
+            "schema": {
+              "type": "string"
+            },
+            "example": "Remote"
+          },
+          {
+            "name": "isRemote",
+            "in": "query",
+            "description": "Filter for remote opportunities",
+            "schema": {
+              "type": "boolean"
+            },
+            "example": true
+          },
+          {
+            "name": "compensationType",
+            "in": "query",
+            "description": "Filter by compensation type",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "SALARY",
+                "HOURLY",
+                "CONTRACT",
+                "STIPEND",
+                "UNPAID",
+                "UNKNOWN"
+              ]
+            },
+            "example": "SALARY"
+          },
+          {
+            "name": "experienceLevel",
+            "in": "query",
+            "description": "Filter by experience level",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "entry",
+                "mid",
+                "senior",
+                "executive",
+                "any"
+              ]
+            },
+            "example": "mid"
+          },
+          {
+            "name": "opportunityTypeIds",
+            "in": "query",
+            "description": "Filter by opportunity type IDs (comma-separated)",
+            "schema": {
+              "type": "string"
+            },
+            "example": "type1,type2"
+          },
+          {
+            "name": "deadline",
+            "in": "query",
+            "description": "Filter by deadline proximity",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "week",
+                "month",
+                "quarter"
+              ]
+            },
+            "example": "month"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Sort field",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "createdAt",
+                "deadline",
+                "title",
+                "organization"
+              ],
+              "default": "createdAt"
+            },
+            "example": "createdAt"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "description": "Sort order",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            },
+            "example": "desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Opportunities retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/OpportunityListResponse"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": {
+                  "success": true,
+                  "message": "Opportunities retrieved successfully",
+                  "data": {
+                    "opportunities": [
+                      {
+                        "id": "cm4xyz123",
+                        "title": "Senior Software Engineer",
+                        "organization": "TechCorp Inc",
+                        "description": "Join our engineering team...",
+                        "locations": [
+                          "San Francisco",
+                          "Remote"
+                        ],
+                        "isRemote": true,
+                        "deadline": "2025-01-15T00:00:00Z",
+                        "compensationType": "SALARY",
+                        "compensation": "$120,000 - $150,000",
+                        "experienceLevel": "senior",
+                        "createdAt": "2025-12-17T22:30:00Z"
+                      }
+                    ],
+                    "pagination": {
+                      "page": 1,
+                      "limit": 10,
+                      "total": 25,
+                      "totalPages": 3,
+                      "hasNextPage": true,
+                      "hasPreviousPage": false
+                    }
+                  },
+                  "timestamp": "2025-12-17T22:30:00Z",
+                  "requestId": "req_123456789"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Opportunities"
+        ],
+        "summary": "Create opportunity",
+        "description": "Create a new opportunity (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOpportunityRequest"
+              },
+              "example": {
+                "title": "Senior Software Engineer",
+                "organization": "TechCorp Inc",
+                "description": "Join our engineering team to build amazing products...",
+                "requirements": [
+                  "5+ years experience",
+                  "React expertise",
+                  "Team leadership"
+                ],
+                "benefits": [
+                  "Health insurance",
+                  "401k matching",
+                  "Flexible hours"
+                ],
+                "compensation": "$120,000 - $150,000",
+                "compensationType": "SALARY",
+                "locations": [
+                  "San Francisco",
+                  "Remote"
+                ],
+                "isRemote": true,
+                "deadline": "2025-01-15",
+                "applicationUrl": "https://techcorp.com/apply",
+                "contactEmail": "hr@techcorp.com",
+                "experienceLevel": "senior",
+                "duration": "Full-time",
+                "eligibility": [
+                  "US work authorization required"
+                ],
+                "opportunityTypeIds": [
+                  "cm4type1",
+                  "cm4type2"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Opportunity created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Opportunity"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/opportunities/{id}": {
+      "get": {
+        "tags": [
+          "Opportunities"
+        ],
+        "summary": "Get opportunity by ID",
+        "description": "Retrieve detailed information about a specific opportunity",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Opportunity ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4xyz123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Opportunity retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Opportunity"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Opportunity not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Opportunities"
+        ],
+        "summary": "Update opportunity",
+        "description": "Update an existing opportunity (requires moderator or admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Opportunity ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4xyz123"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOpportunityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Opportunity updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Opportunity"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Opportunity not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Opportunities"
+        ],
+        "summary": "Delete opportunity",
+        "description": "Delete an opportunity (requires admin role)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Opportunity ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4xyz123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Opportunity deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Opportunity not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/opportunities/saved": {
+      "post": {
+        "tags": [
+          "User Actions"
+        ],
+        "summary": "Save job",
+        "description": "Save an opportunity to user's bookmarks",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveJobRequest"
+              },
+              "example": {
+                "opportunityId": "cm4xyz123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Job saved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/SavedJob"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Job already saved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "User Actions"
+        ],
+        "summary": "Get saved jobs",
+        "description": "Retrieve user's saved jobs with pagination",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Saved jobs retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/SavedJobListResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/opportunities/saved/{opportunityId}": {
+      "delete": {
+        "tags": [
+          "User Actions"
+        ],
+        "summary": "Unsave job",
+        "description": "Remove an opportunity from user's saved jobs",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "opportunityId",
+            "in": "path",
+            "required": true,
+            "description": "Opportunity ID to unsave",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4xyz123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job unsaved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Saved job not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/opportunities/apply": {
+      "post": {
+        "tags": [
+          "User Actions"
+        ],
+        "summary": "Apply to opportunity",
+        "description": "Submit an application for an opportunity",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyToOpportunityRequest"
+              },
+              "example": {
+                "opportunityId": "cm4xyz123",
+                "coverLetter": "I am excited to apply for this position...",
+                "resumeUrl": "https://example.com/resume.pdf"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Application submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Application"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or deadline passed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Already applied to this opportunity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/opportunities/applications/list": {
+      "get": {
+        "tags": [
+          "User Actions"
+        ],
+        "summary": "Get user applications",
+        "description": "Retrieve user's job applications with pagination",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by application status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "REVIEWED",
+                "INTERVIEWED",
+                "REJECTED",
+                "ACCEPTED",
+                "WITHDRAWN"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Applications retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ApplicationListResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/opportunities/applications/{applicationId}": {
+      "get": {
+        "tags": [
+          "User Actions"
+        ],
+        "summary": "Get application by ID",
+        "description": "Retrieve detailed information about a specific application",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "description": "Application ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4app123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Application"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Application not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "User Actions"
+        ],
+        "summary": "Update application",
+        "description": "Update an existing application",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "description": "Application ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4app123"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApplicationRequest"
+              },
+              "example": {
+                "coverLetter": "Updated cover letter content...",
+                "resumeUrl": "https://example.com/updated-resume.pdf"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Application updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Application"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied or application cannot be modified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Application not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/opportunities/applications/{applicationId}/withdraw": {
+      "patch": {
+        "tags": [
+          "User Actions"
+        ],
+        "summary": "Withdraw application",
+        "description": "Withdraw a submitted application",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "description": "Application ID",
+            "schema": {
+              "type": "string"
+            },
+            "example": "cm4app123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application withdrawn successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Application"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied or application cannot be withdrawn",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Application not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }

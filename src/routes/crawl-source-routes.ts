@@ -45,4 +45,11 @@ router.post(
   crawlSourceController.triggerCrawl
 );
 
+// Get queue status/metrics (moderator or admin)
+router.get(
+  '/queue/status',
+  requireModeratorOrAdmin,
+  crawlSourceController.getQueueStatus
+);
+
 export default router;

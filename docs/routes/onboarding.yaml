@@ -1,0 +1,436 @@
+paths:
+  /api/onboarding/status:
+    get:
+      tags:
+        - Onboarding
+      summary: Get onboarding status
+      description: Retrieve the current user's onboarding status and progress
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Onboarding status retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/OnboardingStatus'
+              example:
+                success: true
+                message: "Onboarding status retrieved successfully"
+                data:
+                  isOnboarded: false
+                  currentStep: 1
+                  completedSteps: []
+                  user:
+                    id: "cm4user123"
+                    email: "user@example.com"
+                    name: "John Doe"
+                    jobFunction: null
+                    preferredLocations: []
+                    workAuthorization: null
+                    remoteWork: false
+                    resumeUrl: null
+                timestamp: "2025-12-17T22:30:00Z"
+                requestId: "req_123456789"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/onboarding/step-one:
+    put:
+      tags:
+        - Onboarding
+      summary: Update onboarding step 1
+      description: Update user's job preferences (step 1 of onboarding)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingStepOneRequest'
+            example:
+              jobFunction: "Software Engineering"
+              preferredLocations: ["San Francisco", "Remote", "New York"]
+              workAuthorization: "US_CITIZEN"
+              remoteWork: true
+      responses:
+        '200':
+          description: Step 1 completed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/OnboardingStepResponse'
+              example:
+                success: true
+                message: "Step 1 completed successfully"
+                data:
+                  step: 1
+                  completed: true
+                  nextStep: 2
+                  user:
+                    id: "cm4user123"
+                    jobFunction: "Software Engineering"
+                    preferredLocations: ["San Francisco", "Remote", "New York"]
+                    workAuthorization: "US_CITIZEN"
+                    remoteWork: true
+                timestamp: "2025-12-17T22:30:00Z"
+                requestId: "req_123456789"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/onboarding/step-two:
+    put:
+      tags:
+        - Onboarding
+      summary: Update onboarding step 2
+      description: Update user's resume information (step 2 of onboarding)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingStepTwoRequest'
+            example:
+              resumeUrl: "https://example.com/resume.pdf"
+      responses:
+        '200':
+          description: Step 2 completed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/OnboardingStepResponse'
+              example:
+                success: true
+                message: "Step 2 completed successfully"
+                data:
+                  step: 2
+                  completed: true
+                  nextStep: null
+                  user:
+                    id: "cm4user123"
+                    resumeUrl: "https://example.com/resume.pdf"
+                    isOnboarded: true
+                timestamp: "2025-12-17T22:30:00Z"
+                requestId: "req_123456789"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/onboarding/complete:
+    post:
+      tags:
+        - Onboarding
+      summary: Complete onboarding
+      description: Complete all onboarding steps at once with comprehensive user profile data
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteOnboardingRequest'
+            example:
+              jobFunction: "Software Engineering"
+              preferredLocations: ["San Francisco", "Remote", "New York"]
+              workAuthorization: "US_CITIZEN"
+              remoteWork: true
+              resumeUrl: "https://example.com/resume.pdf"
+      responses:
+        '200':
+          description: Onboarding completed successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CompleteOnboardingResponse'
+              example:
+                success: true
+                message: "Onboarding completed successfully"
+                data:
+                  isOnboarded: true
+                  completedAt: "2025-12-17T22:30:00Z"
+                  user:
+                    id: "cm4user123"
+                    email: "user@example.com"
+                    name: "John Doe"
+                    jobFunction: "Software Engineering"
+                    preferredLocations: ["San Francisco", "Remote", "New York"]
+                    workAuthorization: "US_CITIZEN"
+                    remoteWork: true
+                    resumeUrl: "https://example.com/resume.pdf"
+                    isOnboarded: true
+                timestamp: "2025-12-17T22:30:00Z"
+                requestId: "req_123456789"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/onboarding/skip:
+    post:
+      tags:
+        - Onboarding
+      summary: Skip onboarding
+      description: Skip the onboarding process and mark user as onboarded
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Onboarding skipped successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/SkipOnboardingResponse'
+              example:
+                success: true
+                message: "Onboarding skipped successfully"
+                data:
+                  isOnboarded: true
+                  skippedAt: "2025-12-17T22:30:00Z"
+                  user:
+                    id: "cm4user123"
+                    email: "user@example.com"
+                    name: "John Doe"
+                    isOnboarded: true
+                timestamp: "2025-12-17T22:30:00Z"
+                requestId: "req_123456789"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: User already onboarded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    OnboardingStatus:
+      type: object
+      properties:
+        isOnboarded:
+          type: boolean
+          example: false
+        currentStep:
+          type: integer
+          minimum: 1
+          maximum: 2
+          example: 1
+        completedSteps:
+          type: array
+          items:
+            type: integer
+          example: []
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "cm4user123"
+            email:
+              type: string
+              format: email
+              example: "user@example.com"
+            name:
+              type: string
+              example: "John Doe"
+            jobFunction:
+              type: string
+              nullable: true
+              example: null
+            preferredLocations:
+              type: array
+              items:
+                type: string
+              example: []
+            workAuthorization:
+              type: string
+              nullable: true
+              enum: [US_CITIZEN, PERMANENT_RESIDENT, H1B_VISA, F1_STUDENT, OTHER]
+              example: null
+            remoteWork:
+              type: boolean
+              example: false
+            resumeUrl:
+              type: string
+              nullable: true
+              example: null
+
+    OnboardingStepOneRequest:
+      type: object
+      required: [jobFunction, preferredLocations, workAuthorization, remoteWork]
+      properties:
+        jobFunction:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "Software Engineering"
+        preferredLocations:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          example: ["San Francisco", "Remote", "New York"]
+        workAuthorization:
+          type: string
+          enum: [US_CITIZEN, PERMANENT_RESIDENT, H1B_VISA, F1_STUDENT, OTHER]
+          example: "US_CITIZEN"
+        remoteWork:
+          type: boolean
+          example: true
+
+    OnboardingStepTwoRequest:
+      type: object
+      required: [resumeUrl]
+      properties:
+        resumeUrl:
+          type: string
+          format: uri
+          example: "https://example.com/resume.pdf"
+
+    CompleteOnboardingRequest:
+      type: object
+      required: [jobFunction, preferredLocations, workAuthorization, remoteWork, resumeUrl]
+      properties:
+        jobFunction:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "Software Engineering"
+        preferredLocations:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          example: ["San Francisco", "Remote", "New York"]
+        workAuthorization:
+          type: string
+          enum: [US_CITIZEN, PERMANENT_RESIDENT, H1B_VISA, F1_STUDENT, OTHER]
+          example: "US_CITIZEN"
+        remoteWork:
+          type: boolean
+          example: true
+        resumeUrl:
+          type: string
+          format: uri
+          example: "https://example.com/resume.pdf"
+
+    OnboardingStepResponse:
+      type: object
+      properties:
+        step:
+          type: integer
+          example: 1
+        completed:
+          type: boolean
+          example: true
+        nextStep:
+          type: integer
+          nullable: true
+          example: 2
+        user:
+          type: object
+          description: "Updated user profile data"
+
+    CompleteOnboardingResponse:
+      type: object
+      properties:
+        isOnboarded:
+          type: boolean
+          example: true
+        completedAt:
+          type: string
+          format: date-time
+          example: "2025-12-17T22:30:00Z"
+        user:
+          $ref: '#/components/schemas/User'
+
+    SkipOnboardingResponse:
+      type: object
+      properties:
+        isOnboarded:
+          type: boolean
+          example: true
+        skippedAt:
+          type: string
+          format: date-time
+          example: "2025-12-17T22:30:00Z"
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "cm4user123"
+            email:
+              type: string
+              format: email
+              example: "user@example.com"
+            name:
+              type: string
+              example: "John Doe"
+            isOnboarded:
+              type: boolean
+              example: true

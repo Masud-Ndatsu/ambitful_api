@@ -1,0 +1,599 @@
+paths:
+  /api/crawl-sources:
+    get:
+      tags:
+        - Crawl Sources
+      summary: Get crawl sources
+      description: Retrieve a paginated list of crawl sources (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          example: 1
+        - name: limit
+          in: query
+          description: Number of crawl sources per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          example: 10
+        - name: search
+          in: query
+          description: Search term for name or URL
+          schema:
+            type: string
+          example: "opportunity"
+        - name: status
+          in: query
+          description: Filter by crawl status
+          schema:
+            type: string
+            enum: [ACTIVE, INACTIVE, ERROR]
+          example: "ACTIVE"
+        - name: frequency
+          in: query
+          description: Filter by crawl frequency
+          schema:
+            type: string
+            enum: [DAILY, WEEKLY, MONTHLY]
+          example: "DAILY"
+        - name: isActive
+          in: query
+          description: Filter by active status
+          schema:
+            type: boolean
+          example: true
+      responses:
+        '200':
+          description: Crawl sources retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CrawlSourceListResponse'
+              example:
+                success: true
+                message: "Crawl sources retrieved successfully"
+                data:
+                  crawlSources:
+                    - id: "cm4crawl123"
+                      name: "OpportunityForAfricans Daily Crawl"
+                      url: "https://opportunitiesforafricans.com/opportunities"
+                      frequency: "DAILY"
+                      scraperType: "OPPORTUNITY_FOR_AFRICANS"
+                      status: "ACTIVE"
+                      isActive: true
+                      isDetailsCrawled: true
+                      opportunitiesFound: 127
+                      lastCrawledAt: "2025-12-17T22:30:00Z"
+                      nextCrawlAt: "2025-12-18T22:30:00Z"
+                      createdAt: "2025-12-17T22:30:00Z"
+                  pagination:
+                    page: 1
+                    limit: 10
+                    total: 5
+                    totalPages: 1
+                    hasNextPage: false
+                    hasPreviousPage: false
+                timestamp: "2025-12-17T22:30:00Z"
+                requestId: "req_123456789"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Crawl Sources
+      summary: Create crawl source
+      description: Create a new crawl source (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCrawlSourceRequest'
+            example:
+              name: "OpportunityForAfricans Daily Crawl"
+              url: "https://opportunitiesforafricans.com/opportunities"
+              frequency: "DAILY"
+              scraperType: "OPPORTUNITY_FOR_AFRICANS"
+              cssSelectors: {}
+              isDetailsCrawled: true
+      responses:
+        '201':
+          description: Crawl source created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CrawlSource'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: URL already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/crawl-sources/{id}:
+    get:
+      tags:
+        - Crawl Sources
+      summary: Get crawl source by ID
+      description: Retrieve detailed information about a specific crawl source (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Crawl source ID
+          schema:
+            type: string
+          example: "cm4crawl123"
+      responses:
+        '200':
+          description: Crawl source retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CrawlSource'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Crawl source not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Crawl Sources
+      summary: Update crawl source
+      description: Update an existing crawl source (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Crawl source ID
+          schema:
+            type: string
+          example: "cm4crawl123"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCrawlSourceRequest'
+            example:
+              name: "Updated Crawl Source Name"
+              frequency: "WEEKLY"
+              isActive: false
+      responses:
+        '200':
+          description: Crawl source updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CrawlSource'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Crawl source not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Crawl Sources
+      summary: Delete crawl source
+      description: Delete a crawl source (requires admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Crawl source ID
+          schema:
+            type: string
+          example: "cm4crawl123"
+      responses:
+        '200':
+          description: Crawl source deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Crawl source not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/crawl-sources/{id}/trigger:
+    post:
+      tags:
+        - Crawl Sources
+      summary: Trigger crawl
+      description: Manually trigger a crawl for a specific crawl source (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Crawl source ID
+          schema:
+            type: string
+          example: "cm4crawl123"
+      responses:
+        '200':
+          description: Crawl triggered successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/CrawlTriggerResponse'
+              example:
+                success: true
+                message: "Crawl job queued successfully. Processing will begin shortly."
+                data:
+                  message: "Crawl job queued successfully. Processing will begin shortly."
+                  jobId: "15"
+                timestamp: "2025-12-17T22:30:00Z"
+                requestId: "req_123456789"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Crawl source not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Crawl source is not active
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/crawl-sources/queue/status:
+    get:
+      tags:
+        - Crawl Queue
+      summary: Get crawl queue status
+      description: Retrieve current status and metrics for crawl queues (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Queue status retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/QueueStatus'
+              example:
+                success: true
+                message: "Queue status retrieved successfully"
+                data:
+                  listing:
+                    waiting: 5
+                    active: 2
+                    completed: 123
+                    failed: 3
+                  details:
+                    waiting: 12
+                    active: 8
+                    completed: 456
+                    failed: 7
+                timestamp: "2025-12-17T22:30:00Z"
+                requestId: "req_123456789"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    CrawlSource:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "cm4crawl123"
+        name:
+          type: string
+          example: "OpportunityForAfricans Daily Crawl"
+        url:
+          type: string
+          format: uri
+          example: "https://opportunitiesforafricans.com/opportunities"
+        frequency:
+          type: string
+          enum: [DAILY, WEEKLY, MONTHLY]
+          example: "DAILY"
+        scraperType:
+          type: string
+          enum: [OPPORTUNITY_FOR_AFRICANS, INDEED, LINKEDIN]
+          example: "OPPORTUNITY_FOR_AFRICANS"
+        cssSelectors:
+          type: object
+          nullable: true
+          example: {}
+        status:
+          type: string
+          enum: [ACTIVE, INACTIVE, ERROR]
+          example: "ACTIVE"
+        isActive:
+          type: boolean
+          example: true
+        isDetailsCrawled:
+          type: boolean
+          example: true
+        opportunitiesFound:
+          type: integer
+          nullable: true
+          example: 127
+        errorMessage:
+          type: string
+          nullable: true
+          example: null
+        lastCrawledAt:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2025-12-17T22:30:00Z"
+        nextCrawlAt:
+          type: string
+          format: date-time
+          example: "2025-12-18T22:30:00Z"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-12-17T22:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-12-17T22:30:00Z"
+
+    CrawlSourceListResponse:
+      type: object
+      properties:
+        crawlSources:
+          type: array
+          items:
+            $ref: '#/components/schemas/CrawlSource'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    CreateCrawlSourceRequest:
+      type: object
+      required: [name, url, frequency, scraperType]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+          example: "OpportunityForAfricans Daily Crawl"
+        url:
+          type: string
+          format: uri
+          example: "https://opportunitiesforafricans.com/opportunities"
+        frequency:
+          type: string
+          enum: [DAILY, WEEKLY, MONTHLY]
+          example: "DAILY"
+        scraperType:
+          type: string
+          enum: [OPPORTUNITY_FOR_AFRICANS, INDEED, LINKEDIN]
+          example: "OPPORTUNITY_FOR_AFRICANS"
+        cssSelectors:
+          type: object
+          nullable: true
+          example: {}
+        isDetailsCrawled:
+          type: boolean
+          default: true
+          example: true
+
+    UpdateCrawlSourceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        url:
+          type: string
+          format: uri
+        frequency:
+          type: string
+          enum: [DAILY, WEEKLY, MONTHLY]
+        scraperType:
+          type: string
+          enum: [OPPORTUNITY_FOR_AFRICANS, INDEED, LINKEDIN]
+        cssSelectors:
+          type: object
+          nullable: true
+        isActive:
+          type: boolean
+        isDetailsCrawled:
+          type: boolean
+
+    CrawlTriggerResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Crawl job queued successfully. Processing will begin shortly."
+        jobId:
+          type: string
+          example: "15"
+
+    QueueStatus:
+      type: object
+      properties:
+        listing:
+          type: object
+          properties:
+            waiting:
+              type: integer
+              description: "Number of jobs waiting in the listing queue"
+              example: 5
+            active:
+              type: integer
+              description: "Number of jobs currently being processed in the listing queue"
+              example: 2
+            completed:
+              type: integer
+              description: "Number of completed listing jobs"
+              example: 123
+            failed:
+              type: integer
+              description: "Number of failed listing jobs"
+              example: 3
+        details:
+          type: object
+          properties:
+            waiting:
+              type: integer
+              description: "Number of jobs waiting in the details queue"
+              example: 12
+            active:
+              type: integer
+              description: "Number of jobs currently being processed in the details queue"
+              example: 8
+            completed:
+              type: integer
+              description: "Number of completed details jobs"
+              example: 456
+            failed:
+              type: integer
+              description: "Number of failed details jobs"
+              example: 7

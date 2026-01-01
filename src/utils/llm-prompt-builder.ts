@@ -1,20 +1,19 @@
 /**
  * @typedef {Object} PromptComponent
- * @property {string} type - The type of prompt component (e.g., 'raw', 'directive', 'context').
+ * @property {string} type - The type of prompt component (e.g., 'text', 'instruction', 'context').
  * @property {string} content - The main content of the prompt component.
- * @property {Record<string, any>} [options] - Additional options for the component (e.g., importance, label, explanation).
+ * @property {Record<string, any>} [options] - Additional options for the component (e.g., importance, title, explanation).
  */
 type PromptComponent = {
   type:
-    | 'raw'
-    | 'table'
+    | 'text'
     | 'instruction'
     | 'context'
     | 'rule'
-    | 'illustration'
-    | 'useCase'
-    | 'specialCase'
-    | 'custom';
+    | 'example'
+    | 'scenario'
+    | 'note'
+    | 'section';
   content: string;
   options?: Record<string, any>;
 };
@@ -48,12 +47,12 @@ class LLMPromptBuilder {
   }
 
   /**
-   * Adds plain text to the prompt.
-   * @param {string} content - The plain text content to add.
+   * Adds plain text content to the prompt.
+   * @param {string} content - The text content to add.
    * @returns {LLMPromptBuilder} The instance of the prompt builder for chaining.
    */
-  addPlainText(content: string): LLMPromptBuilder {
-    this.components.push({ type: 'raw', content });
+  addText(content: string): LLMPromptBuilder {
+    this.components.push({ type: 'text', content });
     return this;
   }
 
@@ -83,11 +82,11 @@ class LLMPromptBuilder {
   }
 
   /**
-   * Adds additional context to the prompt.
-   * @param {string} context - The additional context to add.
+   * Adds background context to the prompt.
+   * @param {string} context - The context information to add.
    * @returns {LLMPromptBuilder} The instance of the prompt builder for chaining.
    */
-  addAdditionalContext(context: string): LLMPromptBuilder {
+  addContext(context: string): LLMPromptBuilder {
     this.components.push({ type: 'context', content: context });
     return this;
   }
@@ -113,13 +112,13 @@ class LLMPromptBuilder {
    * @param {string} [explanation] - An optional explanation for the example.
    * @returns {LLMPromptBuilder} The instance of the prompt builder for chaining.
    */
-  addIllustration(
-    illustration: string,
+  addExample(
+    example: string,
     explanation?: string
   ): LLMPromptBuilder {
     this.components.push({
-      type: 'illustration',
-      content: illustration,
+      type: 'example',
+      content: example,
       options: { explanation },
     });
     return this;
@@ -131,9 +130,9 @@ class LLMPromptBuilder {
    * @param {string} [expectedOutcome] - The optional expected outcome for the scenario.
    * @returns {LLMPromptBuilder} The instance of the prompt builder for chaining.
    */
-  addUseCase(scenario: string, expectedOutcome?: string): LLMPromptBuilder {
+  addScenario(scenario: string, expectedOutcome?: string): LLMPromptBuilder {
     this.components.push({
-      type: 'useCase',
+      type: 'scenario',
       content: scenario,
       options: { expectedOutcome },
     });
@@ -146,11 +145,10 @@ class LLMPromptBuilder {
    * @param {string} handling - Instructions on how to handle the special case.
    * @returns {LLMPromptBuilder} The instance of the prompt builder for chaining.
    */
-  addSpecialCase(specialCase: string, handling: string): LLMPromptBuilder {
+  addNote(note: string): LLMPromptBuilder {
     this.components.push({
-      type: 'specialCase',
-      content: specialCase,
-      options: { handling },
+      type: 'note',
+      content: note,
     });
     return this;
   }
@@ -162,35 +160,15 @@ class LLMPromptBuilder {
    * @param {string} [label] - An optional label for the table.
    * @returns {LLMPromptBuilder} The instance of the prompt builder for chaining.
    */
-  addTable(
-    headers: string[],
-    rows: string[][],
-    label?: string
+  addSection(
+    title: string,
+    content: string
   ): LLMPromptBuilder {
-    let tableContent = '';
-
-    // Add label if provided
-    if (label) {
-      tableContent += `**${label}**\n\n`;
-    }
-
-    // Add headers
-    tableContent += '| ' + headers.join(' | ') + ' |\n';
-
-    // Add separator
-    tableContent += '| ' + headers.map(() => '---').join(' | ') + ' |\n';
-
-    // Add rows
-    rows.forEach((row) => {
-      tableContent += '| ' + row.join(' | ') + ' |\n';
-    });
-
     this.components.push({
-      type: 'table',
-      content: tableContent,
-      options: { label: 'Table' },
+      type: 'section',
+      content,
+      options: { title },
     });
-
     return this;
   }
 
@@ -201,25 +179,13 @@ class LLMPromptBuilder {
    * @param {Record<string, any>} [options] - Additional options for the custom content.
    * @returns {LLMPromptBuilder} The instance of the prompt builder for chaining.
    */
-  addCustomBlock(
-    label: string,
-    content: string,
-    options?: Record<string, any>
-  ): LLMPromptBuilder {
-    this.components.push({
-      type: 'custom',
-      content,
-      options: { label, ...options },
-    });
-    return this;
-  }
 
   /**
    * Defines variables to be used in the prompt.
    * @param {Record<string, any>} vars - A key-value pair representing variables.
    * @returns {LLMPromptBuilder} The instance of the prompt builder for chaining.
    */
-  defineUserInputs(vars: Record<string, any>): LLMPromptBuilder {
+  setVariables(vars: Record<string, any>): LLMPromptBuilder {
     this.userInputs = { ...this.userInputs, ...vars };
     return this;
   }
@@ -233,12 +199,11 @@ class LLMPromptBuilder {
 
     // Add global context if available
     if (Object.entries(this.globalContext).length > 0) {
-      prompt +=
-        '<global_context>\n' +
-        Object.entries(this.globalContext)
-          .map(([key, value]) => `${key}: ${value}`)
-          .join('\n') +
-        '\n</global_context>\n\n';
+      prompt += 'CONTEXT:\n';
+      prompt += Object.entries(this.globalContext)
+        .map(([key, value]) => `- ${key}: ${value}`)
+        .join('\n');
+      prompt += '\n\n';
     }
 
     // Add components
@@ -248,15 +213,13 @@ class LLMPromptBuilder {
 
     // Add user inputs if available
     if (Object.keys(this.userInputs).length > 0) {
-      prompt +=
-        '\n\n<user_inputs>\n' +
-        Object.entries(this.userInputs)
-          .map(([key, value]) => `${key}: ${value}`)
-          .join('\n') +
-        '\n</user_inputs>';
+      prompt += '\n\nINPUT DATA:\n';
+      prompt += Object.entries(this.userInputs)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join('\n');
     }
 
-    return prompt;
+    return prompt.trim();
   }
 
   /**
@@ -267,44 +230,39 @@ class LLMPromptBuilder {
    */
   private renderComponent(component: PromptComponent): string {
     switch (component.type) {
-      case 'raw':
+      case 'text':
         return component.content;
       case 'instruction': {
-        const prefix = component.options?.importance;
-        return `<instruction>\n${prefix ?? ''} ${
-          component.content
-        }\n</instruction>`;
+        const importance = component.options?.importance;
+        const prefix = importance ? `[${importance.toUpperCase()}] ` : '';
+        return `${prefix}${component.content}`;
       }
       case 'context':
         return component.content.length > 0
-          ? `<context>\n${component.content}\n</context>`
-          : 'N/A';
+          ? `Background: ${component.content}`
+          : '';
       case 'rule':
-        return `<rules>\n${component.content}\n</rules>`;
-      case 'illustration': {
-        let illustrationText = `<illustration>\n${component.content}`;
+        return `Rules:\n- ${component.content.split('\n').join('\n- ')}`;
+      case 'example': {
+        let text = `Example: ${component.content}`;
         if (component.options?.explanation) {
-          illustrationText += `\n*${component.options.explanation}*`;
+          text += `\n(${component.options.explanation})`;
         }
-        return `${illustrationText}\n</illustration>`;
+        return text;
       }
-      case 'useCase': {
-        let useCaseText = `<use_case>\n${component.content}`;
+      case 'scenario': {
+        let text = `Scenario: ${component.content}`;
         if (component.options?.expectedOutcome) {
-          useCaseText += `\n**Expected:** ${component.options.expectedOutcome}`;
+          text += `\nExpected result: ${component.options.expectedOutcome}`;
         }
-        return `${useCaseText}\n</use_case>`;
+        return text;
       }
-      case 'specialCase':
-        return `<special_case>\n${component.content}\n**Handling:** ${component.options?.handling}\n</special_case>`;
-      case 'custom': {
-        const label = component.options?.label
-          .toLowerCase()
-          .replace(/\s+/g, '_');
-        return `<${label}>\n${component.content}\n</${label}>`;
+      case 'note':
+        return `Note: ${component.content}`;
+      case 'section': {
+        const title = component.options?.title;
+        return `## ${title}\n\n${component.content}`;
       }
-      case 'table':
-        return `<table>\n${component.content}\n</table>`;
       default:
         return '';
     }

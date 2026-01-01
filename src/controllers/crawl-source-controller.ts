@@ -92,6 +92,19 @@ class CrawlSourceController {
       next(error);
     }
   };
+
+  getQueueStatus = async (
+    _req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const result = await crawlSourceService.getQueueStatus();
+      return sendSuccess(res, result, 'Queue status retrieved successfully');
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export const crawlSourceController = new CrawlSourceController();

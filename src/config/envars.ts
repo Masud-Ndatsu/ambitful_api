@@ -1,5 +1,6 @@
 interface Config {
   OPENAI_API_KEY: string;
+  GEN_API_KEY: string;
   PINECONE_API_KEY: string;
   NODE_ENV: string;
   PORT: string;
@@ -14,7 +15,6 @@ interface Config {
   REDIS_URL: string;
   SCRAPERDO_API_KEY: string;
 }
-
 
 export const config: Config = {
   NODE_ENV: process.env.NODE_ENV!,
@@ -31,4 +31,5 @@ export const config: Config = {
   SCRAPERDO_API_KEY: process.env.SCRAPERDO_API_KEY!,
   PINECONE_API_KEY: process.env.PINECONE_API_KEY!,
   OPENAI_API_KEY: process.env.OPENAI_API_KEY!,
+  GEN_API_KEY: process.env.GEN_API_KEY!,
 };

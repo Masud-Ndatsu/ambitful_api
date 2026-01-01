@@ -9,10 +9,8 @@ import {
   extractOpportunityDetailsPrompt,
   extractOpportunityMetadataPrompt,
 } from '../../constant/ai-prompts/opportunity-for-africans-prompt.js';
-import openaiClient, { OPENAI_MODEL } from '../../constant/ai';
+import geminiClient, { GEMINI_MODEL } from '../../constant/ai';
 import retry from 'async-retry';
-import cleanLLMJson from '../../utils/clean-llm-json';
-import redis from '../../config/redis.js';
 import {
   OpportunityListingResp,
   OpportunityDetailsResp,
@@ -21,10 +19,14 @@ import { CreateOpportunityData } from '../../schemas/opportunity';
 
 export class OpportunityForAfricansScraper extends BaseScraper {
   scraperType = 'OPPORTUNITY_FOR_AFRICANS' as const;
-  private CACHE_TTL = 60 * 60 * 24; // 24 hours
 
   constructor() {
     super();
+  }
+
+  private cleanAIResponse(raw: string): string {
+    const match = raw.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+    return match ? match[1].trim() : raw.trim();
   }
 
   getDisplayName(): string {
@@ -32,7 +34,7 @@ export class OpportunityForAfricansScraper extends BaseScraper {
   }
 
   getSupportedDomains(): string[] {
-    return ['opportunitydesk.org', 'www.opportunitydesk.org'];
+    return ['opportunitiesforafricans.com', 'www.opportunitiesforafricans.com'];
   }
 
   isUrlCompatible(url: string): boolean {
@@ -44,26 +46,12 @@ export class OpportunityForAfricansScraper extends BaseScraper {
     }
   }
 
-  private getCacheKey(type: 'listing' | 'details', identifier: string): string {
-    return `opportunity_desk:${type}:${identifier}`;
-  }
-
   constructOpportunityDetailsPage(path: string): string {
-    return `https://opportunitydesk.org/${path}`;
+    return `https://opportunitiesforafricans.com/${path}`;
   }
 
   async scrapeOpportunityListing(url: string): Promise<ScrapingResult> {
-    const cacheKey = this.getCacheKey('listing', url);
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      console.log('Cache hit for opportunity listing:', url);
-      const cachedData = JSON.parse(cached) as OpportunityListingResp;
-      return {
-        success: true,
-        opportunity_listings: cachedData.opportunity_listings,
-        total_found: cachedData.opportunity_listings.length,
-      };
-    }
+    // Note: Caching is now handled at the queue service level for consistency
 
     try {
       const response = await scraperDo.scrape(url);
@@ -77,34 +65,26 @@ export class OpportunityForAfricansScraper extends BaseScraper {
 
       const result = await retry(
         async () => {
-          const aiResult = await openaiClient.chat.completions.create({
-            model: OPENAI_MODEL,
-            messages: [
-              {
-                role: 'user',
-                content: extractOpportunityMetadataPrompt(markdownConversion),
-              },
-            ],
-            temperature: 0,
+          const aiResult = await geminiClient.models.generateContent({
+            model: GEMINI_MODEL,
+            contents: extractOpportunityMetadataPrompt(markdownConversion),
+            config: {
+              temperature: 0,
+            },
           });
 
-          const aiResp = aiResult.choices[0]?.message?.content || '';
+          const aiResp = aiResult.text || '';
           console.log({ aiResp });
-          return cleanLLMJson(aiResp as any);
+          const cleanedResponse = this.cleanAIResponse(aiResp);
+          return JSON.parse(cleanedResponse);
         },
         { retries: 3, minTimeout: 1000, maxTimeout: 5000 }
       );
 
-      const opportunityListingResp: OpportunityListingResp = JSON.parse(result);
+      const opportunityListingResp: OpportunityListingResp = result;
       console.log({ opportunityListingResp });
 
-      // Cache the result
-      await redis.set(
-        cacheKey,
-        JSON.stringify(opportunityListingResp),
-        'EX',
-        this.CACHE_TTL
-      );
+      // Note: Result caching is handled at the queue service level
 
       return {
         success: true,
@@ -124,12 +104,7 @@ export class OpportunityForAfricansScraper extends BaseScraper {
   async scrapeOpportunityDetails(
     opportunityId: string
   ): Promise<OpportunityDetails> {
-    const cacheKey = this.getCacheKey('details', opportunityId);
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      console.log('Cache hit for opportunity details:', opportunityId);
-      return JSON.parse(cached) as OpportunityDetails;
-    }
+    // Note: Details caching is handled at the queue service level for efficiency
 
     const opportunityDetailsPage =
       this.constructOpportunityDetailsPage(opportunityId);
@@ -146,24 +121,22 @@ export class OpportunityForAfricansScraper extends BaseScraper {
 
     const result = await retry(
       async () => {
-        const aiResult = await openaiClient.chat.completions.create({
-          model: OPENAI_MODEL,
-          messages: [
-            {
-              role: 'user',
-              content: extractOpportunityDetailsPrompt(markdownConversion),
-            },
-          ],
-          temperature: 0,
+        const aiResult = await geminiClient.models.generateContent({
+          model: GEMINI_MODEL,
+          contents: extractOpportunityDetailsPrompt(markdownConversion),
+          config: {
+            temperature: 0,
+          },
         });
 
-        const aiResp = aiResult.choices[0]?.message?.content || '';
-        return cleanLLMJson(aiResp as any);
+        const aiResp = aiResult.text || '';
+        const cleanedResponse = this.cleanAIResponse(aiResp);
+        return JSON.parse(cleanedResponse);
       },
       { retries: 3, minTimeout: 1000, maxTimeout: 5000 }
     );
 
-    const opportunityDetailsResp: OpportunityDetailsResp = JSON.parse(result);
+    const opportunityDetailsResp: OpportunityDetailsResp = result;
 
     const opportunityDetails: OpportunityDetails = {
       id: opportunityId,
@@ -185,13 +158,7 @@ export class OpportunityForAfricansScraper extends BaseScraper {
       rawData: opportunityDetailsResp,
     };
 
-    // Cache the result
-    await redis.set(
-      cacheKey,
-      JSON.stringify(opportunityDetails),
-      'EX',
-      this.CACHE_TTL
-    );
+    // Note: Details caching is handled at the queue service level
 
     return opportunityDetails;
   }

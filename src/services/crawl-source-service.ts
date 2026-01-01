@@ -8,14 +8,9 @@ import {
   CrawlSourceListResponse,
 } from '../schemas/crawl-source';
 import { NotFoundException, ConflictException } from '../utils/http-exception';
-import { ScraperFactory } from './scrapers/scraper-factory';
-import { CreateOpportunityData } from '../schemas/opportunity';
+import { crawlQueueService } from './crawl-queue-service';
 
 class CrawlSourceService {
-  constructor() {
-    // No need for individual scraper instances - using factory pattern
-  }
-
   async createCrawlSource(
     data: CreateCrawlSourceData
   ): Promise<CrawlSourceResponse> {
@@ -179,8 +174,9 @@ class CrawlSourceService {
   }
 
   async triggerCrawl(
-    id: string
-  ): Promise<{ message: string; opportunitiesCreated: number }> {
+    id: string,
+    userId?: string
+  ): Promise<{ message: string; jobId: string }> {
     const crawlSource = await prisma.crawlSource.findUnique({
       where: { id },
     });
@@ -193,180 +189,140 @@ class CrawlSourceService {
       throw new ConflictException('Crawl source is not active');
     }
 
-    try {
-      // Update status to ACTIVE
-      await prisma.crawlSource.update({
-        where: { id },
-        data: {
-          status: 'ACTIVE',
-          errorMessage: null,
-        },
-      });
+    logger.info('Queuing crawl for source', {
+      crawlSourceId: id,
+      url: crawlSource.url,
+    });
 
-      logger.info('Starting crawl for source', {
+    // Queue the listing crawl job
+    const job = await crawlQueueService.queueListingCrawl(
+      {
         crawlSourceId: id,
         url: crawlSource.url,
+        scraperType: crawlSource.scraperType,
+        userId,
+      },
+      {
+        priority: 10, // High priority for manual triggers
+        delay: 0, // Execute immediately
+      }
+    );
+
+    logger.info('Crawl job queued successfully', {
+      crawlSourceId: id,
+      jobId: job.id,
+    });
+
+    return {
+      message: 'Crawl job queued successfully. Processing will begin shortly.',
+      jobId: job.id?.toString() || 'unknown',
+    };
+  }
+
+  async getQueueStatus(): Promise<{
+    listing: {
+      waiting: number;
+      active: number;
+      completed: number;
+      failed: number;
+    };
+    details: {
+      waiting: number;
+      active: number;
+      completed: number;
+      failed: number;
+    };
+  }> {
+    return await crawlQueueService.getQueueStats();
+  }
+
+  async triggerBulkCrawl(
+    crawlSourceIds: string[],
+    userId?: string
+  ): Promise<{ message: string; jobIds: string[] }> {
+    const jobIds: string[] = [];
+
+    for (const id of crawlSourceIds) {
+      const crawlSource = await prisma.crawlSource.findUnique({
+        where: { id },
       });
 
-      // Get the appropriate scraper based on scraper type
-      const scraper = ScraperFactory.getScraper(crawlSource.scraperType);
+      if (crawlSource && crawlSource.isActive) {
+        const job = await crawlQueueService.queueListingCrawl(
+          {
+            crawlSourceId: id,
+            url: crawlSource.url,
+            scraperType: crawlSource.scraperType,
+            userId,
+          },
+          {
+            priority: 8, // Slightly lower priority for bulk operations
+            delay: Math.random() * 10000, // Random delay 0-10s to avoid overwhelming
+          }
+        );
 
-      // Scrape the listing page
-      const listingData = await scraper.scrapeOpportunityListing(
-        crawlSource.url
+        jobIds.push(job.id?.toString() || 'unknown');
+      }
+    }
+
+    logger.info('Bulk crawl jobs queued successfully', {
+      crawlSourceCount: crawlSourceIds.length,
+      jobCount: jobIds.length,
+    });
+
+    return {
+      message: `${jobIds.length} crawl jobs queued successfully`,
+      jobIds,
+    };
+  }
+
+  async scheduleRecurringCrawls(): Promise<{
+    message: string;
+    jobsQueued: number;
+  }> {
+    const crawlSources = await prisma.crawlSource.findMany({
+      where: {
+        isActive: true,
+        nextCrawlAt: {
+          lte: new Date(),
+        },
+      },
+    });
+
+    let jobsQueued = 0;
+
+    for (const crawlSource of crawlSources) {
+      await crawlQueueService.queueListingCrawl(
+        {
+          crawlSourceId: crawlSource.id,
+          url: crawlSource.url,
+          scraperType: crawlSource.scraperType,
+        },
+        {
+          priority: 5, // Medium priority for scheduled crawls
+          delay: Math.random() * 30000, // Random delay 0-30s to spread load
+        }
       );
 
-      let opportunitiesCreated = 0;
-
-      // Get or create default opportunity type
-      const defaultOpportunityType = await prisma.opportunityType.findFirst({
-        where: { name: 'General' },
-      });
-
-      if (!defaultOpportunityType) {
-        throw new Error(
-          'Default opportunity type not found. Please create a "General" opportunity type.'
-        );
-      }
-
-      // Process each opportunity listing
-      for (const listing of listingData.opportunity_listings) {
-        try {
-          let detailsData = null;
-
-          // Check if details crawling is enabled
-          if (crawlSource.isDetailsCrawled) {
-            // Scrape detailed information
-            detailsData = await scraper.scrapeOpportunityDetails(
-              listing.opportunity_id
-            );
-          }
-
-          // Convert to opportunity format - use listing data if details not crawled
-          const opportunityData: CreateOpportunityData = detailsData
-            ? await scraper.convertToOpportunityFormat(
-                detailsData,
-                defaultOpportunityType.id
-              )
-            : {
-                title: listing.title || 'Untitled Opportunity',
-                organization: listing.organization || 'Unknown Organization',
-                description: 'Details not yet crawled',
-                requirements: [],
-                benefits: [],
-                compensation: '',
-                compensationType: 'UNKNOWN' as any,
-                locations: listing.location ? [listing.location] : [],
-                isRemote: false,
-                deadline:
-                  listing.deadline ||
-                  new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-                applicationUrl: listing.url || '',
-                contactEmail: '',
-                experienceLevel: 'any',
-                duration: '',
-                eligibility: [],
-                opportunityTypeIds: [defaultOpportunityType.id],
-              };
-
-          // Check if AI draft already exists by title and organization
-          const existingDraft = await prisma.aIDraft.findFirst({
-            where: {
-              title: opportunityData.title,
-              organization: opportunityData.organization,
-            },
-          });
-
-          if (!existingDraft) {
-            // Create AI draft instead of directly creating opportunity
-            const sourceUrl = scraper.constructOpportunityDetailsPage(
-              listing.opportunity_id
-            );
-
-            await prisma.aIDraft.create({
-              data: {
-                title: opportunityData.title,
-                organization: opportunityData.organization,
-                description: opportunityData.description,
-                requirements: opportunityData.requirements || [],
-                benefits: opportunityData.benefits || [],
-                compensation: opportunityData.compensation,
-                compensationType: opportunityData.compensationType,
-                locations: opportunityData.locations || [],
-                isRemote: opportunityData.isRemote,
-                deadline: new Date(opportunityData.deadline),
-                applicationUrl: opportunityData.applicationUrl,
-                contactEmail: opportunityData.contactEmail,
-                experienceLevel: opportunityData.experienceLevel,
-                duration: opportunityData.duration,
-                eligibility: opportunityData.eligibility || [],
-                crawlSourceId: id,
-                sourceUrl,
-                status: 'PENDING',
-                isDetailsCrawled: crawlSource.isDetailsCrawled,
-                rawScrapedData: detailsData?.rawData || listing,
-              },
-            });
-
-            opportunitiesCreated++;
-            logger.info('AI draft created from crawl', {
-              title: opportunityData.title,
-              organization: opportunityData.organization,
-            });
-          } else {
-            logger.info('AI draft already exists, skipping', {
-              title: opportunityData.title,
-            });
-          }
-        } catch (error: any) {
-          logger.error('Error processing opportunity listing', {
-            listingId: listing.opportunity_id,
-            error: error.message,
-          });
-          // Continue with next opportunity
-        }
-      }
-
-      // Update crawl source with success
+      // Update next crawl time
       const nextCrawlAt = this.calculateNextCrawlTime(crawlSource.frequency);
       await prisma.crawlSource.update({
-        where: { id },
-        data: {
-          status: 'INACTIVE',
-          lastCrawledAt: new Date(),
-          nextCrawlAt,
-          opportunitiesFound:
-            crawlSource.opportunitiesFound + opportunitiesCreated,
-          errorMessage: null,
-        },
+        where: { id: crawlSource.id },
+        data: { nextCrawlAt },
       });
 
-      logger.info('Crawl completed successfully', {
-        crawlSourceId: id,
-        opportunitiesCreated,
-      });
-
-      return {
-        message: 'Crawl completed successfully',
-        opportunitiesCreated,
-      };
-    } catch (error: any) {
-      // Update crawl source with error
-      await prisma.crawlSource.update({
-        where: { id },
-        data: {
-          status: 'ERROR',
-          errorMessage: error.message,
-        },
-      });
-
-      logger.error('Crawl failed', {
-        crawlSourceId: id,
-        error: error.message,
-      });
-
-      throw error;
+      jobsQueued++;
     }
+
+    logger.info('Recurring crawls scheduled', {
+      sourcesChecked: crawlSources.length,
+      jobsQueued,
+    });
+
+    return {
+      message: `${jobsQueued} recurring crawl jobs queued`,
+      jobsQueued,
+    };
   }
 
   private calculateNextCrawlTime(

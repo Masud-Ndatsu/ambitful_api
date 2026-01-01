@@ -1,0 +1,1075 @@
+paths:
+  /api/opportunities:
+    get:
+      tags:
+        - Opportunities
+      summary: Get opportunities
+      description: Retrieve a paginated list of available opportunities with filtering options
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          example: 1
+        - name: limit
+          in: query
+          description: Number of opportunities per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          example: 10
+        - name: search
+          in: query
+          description: Search term for title or description
+          schema:
+            type: string
+          example: "software engineer"
+        - name: location
+          in: query
+          description: Filter by location
+          schema:
+            type: string
+          example: "Remote"
+        - name: isRemote
+          in: query
+          description: Filter for remote opportunities
+          schema:
+            type: boolean
+          example: true
+        - name: compensationType
+          in: query
+          description: Filter by compensation type
+          schema:
+            type: string
+            enum: [SALARY, HOURLY, CONTRACT, STIPEND, UNPAID, UNKNOWN]
+          example: "SALARY"
+        - name: experienceLevel
+          in: query
+          description: Filter by experience level
+          schema:
+            type: string
+            enum: [entry, mid, senior, executive, any]
+          example: "mid"
+        - name: opportunityTypeIds
+          in: query
+          description: Filter by opportunity type IDs (comma-separated)
+          schema:
+            type: string
+          example: "type1,type2"
+        - name: deadline
+          in: query
+          description: Filter by deadline proximity
+          schema:
+            type: string
+            enum: [week, month, quarter]
+          example: "month"
+        - name: sortBy
+          in: query
+          description: Sort field
+          schema:
+            type: string
+            enum: [createdAt, deadline, title, organization]
+            default: createdAt
+          example: "createdAt"
+        - name: sortOrder
+          in: query
+          description: Sort order
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+          example: "desc"
+      responses:
+        '200':
+          description: Opportunities retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/OpportunityListResponse'
+              example:
+                success: true
+                message: "Opportunities retrieved successfully"
+                data:
+                  opportunities:
+                    - id: "cm4xyz123"
+                      title: "Senior Software Engineer"
+                      organization: "TechCorp Inc"
+                      description: "Join our engineering team..."
+                      locations: ["San Francisco", "Remote"]
+                      isRemote: true
+                      deadline: "2025-01-15T00:00:00Z"
+                      compensationType: "SALARY"
+                      compensation: "$120,000 - $150,000"
+                      experienceLevel: "senior"
+                      createdAt: "2025-12-17T22:30:00Z"
+                  pagination:
+                    page: 1
+                    limit: 10
+                    total: 25
+                    totalPages: 3
+                    hasNextPage: true
+                    hasPreviousPage: false
+                timestamp: "2025-12-17T22:30:00Z"
+                requestId: "req_123456789"
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Opportunities
+      summary: Create opportunity
+      description: Create a new opportunity (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOpportunityRequest'
+            example:
+              title: "Senior Software Engineer"
+              organization: "TechCorp Inc"
+              description: "Join our engineering team to build amazing products..."
+              requirements: ["5+ years experience", "React expertise", "Team leadership"]
+              benefits: ["Health insurance", "401k matching", "Flexible hours"]
+              compensation: "$120,000 - $150,000"
+              compensationType: "SALARY"
+              locations: ["San Francisco", "Remote"]
+              isRemote: true
+              deadline: "2025-01-15"
+              applicationUrl: "https://techcorp.com/apply"
+              contactEmail: "hr@techcorp.com"
+              experienceLevel: "senior"
+              duration: "Full-time"
+              eligibility: ["US work authorization required"]
+              opportunityTypeIds: ["cm4type1", "cm4type2"]
+      responses:
+        '201':
+          description: Opportunity created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Opportunity'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/opportunities/{id}:
+    get:
+      tags:
+        - Opportunities
+      summary: Get opportunity by ID
+      description: Retrieve detailed information about a specific opportunity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Opportunity ID
+          schema:
+            type: string
+          example: "cm4xyz123"
+      responses:
+        '200':
+          description: Opportunity retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Opportunity'
+        '404':
+          description: Opportunity not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Opportunities
+      summary: Update opportunity
+      description: Update an existing opportunity (requires moderator or admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Opportunity ID
+          schema:
+            type: string
+          example: "cm4xyz123"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOpportunityRequest'
+      responses:
+        '200':
+          description: Opportunity updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Opportunity'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Opportunity not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Opportunities
+      summary: Delete opportunity
+      description: Delete an opportunity (requires admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Opportunity ID
+          schema:
+            type: string
+          example: "cm4xyz123"
+      responses:
+        '200':
+          description: Opportunity deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Opportunity not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/opportunities/saved:
+    post:
+      tags:
+        - User Actions
+      summary: Save job
+      description: Save an opportunity to user's bookmarks
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveJobRequest'
+            example:
+              opportunityId: "cm4xyz123"
+      responses:
+        '201':
+          description: Job saved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/SavedJob'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Job already saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags:
+        - User Actions
+      summary: Get saved jobs
+      description: Retrieve user's saved jobs with pagination
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: Saved jobs retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/SavedJobListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/opportunities/saved/{opportunityId}:
+    delete:
+      tags:
+        - User Actions
+      summary: Unsave job
+      description: Remove an opportunity from user's saved jobs
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: opportunityId
+          in: path
+          required: true
+          description: Opportunity ID to unsave
+          schema:
+            type: string
+          example: "cm4xyz123"
+      responses:
+        '200':
+          description: Job unsaved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Saved job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/opportunities/apply:
+    post:
+      tags:
+        - User Actions
+      summary: Apply to opportunity
+      description: Submit an application for an opportunity
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyToOpportunityRequest'
+            example:
+              opportunityId: "cm4xyz123"
+              coverLetter: "I am excited to apply for this position..."
+              resumeUrl: "https://example.com/resume.pdf"
+      responses:
+        '201':
+          description: Application submitted successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Application'
+        '400':
+          description: Validation error or deadline passed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Already applied to this opportunity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/opportunities/applications/list:
+    get:
+      tags:
+        - User Actions
+      summary: Get user applications
+      description: Retrieve user's job applications with pagination
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: status
+          in: query
+          description: Filter by application status
+          schema:
+            type: string
+            enum: [PENDING, REVIEWED, INTERVIEWED, REJECTED, ACCEPTED, WITHDRAWN]
+      responses:
+        '200':
+          description: Applications retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ApplicationListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/opportunities/applications/{applicationId}:
+    get:
+      tags:
+        - User Actions
+      summary: Get application by ID
+      description: Retrieve detailed information about a specific application
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          description: Application ID
+          schema:
+            type: string
+          example: "cm4app123"
+      responses:
+        '200':
+          description: Application retrieved successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Application'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Application not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - User Actions
+      summary: Update application
+      description: Update an existing application
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          description: Application ID
+          schema:
+            type: string
+          example: "cm4app123"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateApplicationRequest'
+            example:
+              coverLetter: "Updated cover letter content..."
+              resumeUrl: "https://example.com/updated-resume.pdf"
+      responses:
+        '200':
+          description: Application updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Application'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied or application cannot be modified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Application not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/opportunities/applications/{applicationId}/withdraw:
+    patch:
+      tags:
+        - User Actions
+      summary: Withdraw application
+      description: Withdraw a submitted application
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          description: Application ID
+          schema:
+            type: string
+          example: "cm4app123"
+      responses:
+        '200':
+          description: Application withdrawn successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Application'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Access denied or application cannot be withdrawn
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Application not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Opportunity:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "cm4xyz123"
+        title:
+          type: string
+          example: "Senior Software Engineer"
+        organization:
+          type: string
+          example: "TechCorp Inc"
+        description:
+          type: string
+          example: "Join our engineering team to build amazing products..."
+        requirements:
+          type: array
+          items:
+            type: string
+          example: ["5+ years experience", "React expertise", "Team leadership"]
+        benefits:
+          type: array
+          items:
+            type: string
+          example: ["Health insurance", "401k matching", "Flexible hours"]
+        compensation:
+          type: string
+          example: "$120,000 - $150,000"
+        compensationType:
+          type: string
+          enum: [SALARY, HOURLY, CONTRACT, STIPEND, UNPAID, UNKNOWN]
+          example: "SALARY"
+        locations:
+          type: array
+          items:
+            type: string
+          example: ["San Francisco", "Remote"]
+        isRemote:
+          type: boolean
+          example: true
+        deadline:
+          type: string
+          format: date-time
+          example: "2025-01-15T00:00:00Z"
+        applicationUrl:
+          type: string
+          nullable: true
+          example: "https://techcorp.com/apply"
+        contactEmail:
+          type: string
+          nullable: true
+          example: "hr@techcorp.com"
+        experienceLevel:
+          type: string
+          enum: [entry, mid, senior, executive, any]
+          example: "senior"
+        duration:
+          type: string
+          example: "Full-time"
+        eligibility:
+          type: array
+          items:
+            type: string
+          example: ["US work authorization required"]
+        status:
+          type: string
+          enum: [DRAFT, ACTIVE, PAUSED, CLOSED, ARCHIVED]
+          example: "ACTIVE"
+        author:
+          type: string
+          example: "System"
+        opportunityCategories:
+          type: array
+          items:
+            type: object
+            properties:
+              opportunityType:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-12-17T22:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-12-17T22:30:00Z"
+
+    OpportunityListResponse:
+      type: object
+      properties:
+        opportunities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Opportunity'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    CreateOpportunityRequest:
+      type: object
+      required: [title, organization, description, deadline, opportunityTypeIds]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+          example: "Senior Software Engineer"
+        organization:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: "TechCorp Inc"
+        description:
+          type: string
+          minLength: 10
+          example: "Join our engineering team to build amazing products..."
+        requirements:
+          type: array
+          items:
+            type: string
+          example: ["5+ years experience", "React expertise"]
+        benefits:
+          type: array
+          items:
+            type: string
+          example: ["Health insurance", "401k matching"]
+        compensation:
+          type: string
+          example: "$120,000 - $150,000"
+        compensationType:
+          type: string
+          enum: [SALARY, HOURLY, CONTRACT, STIPEND, UNPAID, UNKNOWN]
+          example: "SALARY"
+        locations:
+          type: array
+          items:
+            type: string
+          example: ["San Francisco", "Remote"]
+        isRemote:
+          type: boolean
+          example: true
+        deadline:
+          type: string
+          format: date
+          example: "2025-01-15"
+        applicationUrl:
+          type: string
+          format: uri
+          example: "https://techcorp.com/apply"
+        contactEmail:
+          type: string
+          format: email
+          example: "hr@techcorp.com"
+        experienceLevel:
+          type: string
+          enum: [entry, mid, senior, executive, any]
+          example: "senior"
+        duration:
+          type: string
+          example: "Full-time"
+        eligibility:
+          type: array
+          items:
+            type: string
+          example: ["US work authorization required"]
+        opportunityTypeIds:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          example: ["cm4type1", "cm4type2"]
+        author:
+          type: string
+          example: "Admin"
+
+    UpdateOpportunityRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        organization:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          minLength: 10
+        requirements:
+          type: array
+          items:
+            type: string
+        benefits:
+          type: array
+          items:
+            type: string
+        compensation:
+          type: string
+        compensationType:
+          type: string
+          enum: [SALARY, HOURLY, CONTRACT, STIPEND, UNPAID, UNKNOWN]
+        locations:
+          type: array
+          items:
+            type: string
+        isRemote:
+          type: boolean
+        deadline:
+          type: string
+          format: date
+        applicationUrl:
+          type: string
+          format: uri
+        contactEmail:
+          type: string
+          format: email
+        experienceLevel:
+          type: string
+          enum: [entry, mid, senior, executive, any]
+        duration:
+          type: string
+        eligibility:
+          type: array
+          items:
+            type: string
+        opportunityTypeIds:
+          type: array
+          items:
+            type: string
+        author:
+          type: string
+
+    SaveJobRequest:
+      type: object
+      required: [opportunityId]
+      properties:
+        opportunityId:
+          type: string
+          example: "cm4xyz123"
+
+    SavedJob:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "cm4save123"
+        userId:
+          type: string
+          example: "cm4user123"
+        opportunityId:
+          type: string
+          example: "cm4xyz123"
+        opportunity:
+          $ref: '#/components/schemas/Opportunity'
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-12-17T22:30:00Z"
+
+    SavedJobListResponse:
+      type: object
+      properties:
+        savedJobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SavedJob'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    ApplyToOpportunityRequest:
+      type: object
+      required: [opportunityId]
+      properties:
+        opportunityId:
+          type: string
+          example: "cm4xyz123"
+        coverLetter:
+          type: string
+          example: "I am excited to apply for this position..."
+        resumeUrl:
+          type: string
+          format: uri
+          example: "https://example.com/resume.pdf"
+
+    Application:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "cm4app123"
+        userId:
+          type: string
+          example: "cm4user123"
+        opportunityId:
+          type: string
+          example: "cm4xyz123"
+        coverLetter:
+          type: string
+          nullable: true
+          example: "I am excited to apply for this position..."
+        resumeUrl:
+          type: string
+          nullable: true
+          example: "https://example.com/resume.pdf"
+        status:
+          type: string
+          enum: [PENDING, REVIEWED, INTERVIEWED, REJECTED, ACCEPTED, WITHDRAWN]
+          example: "PENDING"
+        appliedAt:
+          type: string
+          format: date-time
+          example: "2025-12-17T22:30:00Z"
+        opportunity:
+          $ref: '#/components/schemas/Opportunity'
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-12-17T22:30:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-12-17T22:30:00Z"
+
+    ApplicationListResponse:
+      type: object
+      properties:
+        applications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Application'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    UpdateApplicationRequest:
+      type: object
+      properties:
+        coverLetter:
+          type: string
+          example: "Updated cover letter content..."
+        resumeUrl:
+          type: string
+          format: uri
+          example: "https://example.com/updated-resume.pdf"
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 10
+        total:
+          type: integer
+          example: 25
+        totalPages:
+          type: integer
+          example: 3
+        hasNextPage:
+          type: boolean
+          example: true
+        hasPreviousPage:
+          type: boolean
+          example: false

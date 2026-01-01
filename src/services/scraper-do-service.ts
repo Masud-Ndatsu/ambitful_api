@@ -34,6 +34,7 @@ export class ScraperDoService {
           const encodedUrl = encodeURIComponent(targetUrl);
           const render = 'false'; // render js
           const superProxy = 'true'; // proxy
+
           const apiUrl = `https://api.scrape.do/?token=${config.SCRAPERDO_API_KEY}&url=${encodedUrl}&render=${render}&super=${superProxy}`;
 
           const response = await axios({

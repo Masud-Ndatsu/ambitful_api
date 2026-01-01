@@ -1,11 +1,9 @@
 import { config } from '../config/envars';
-import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 
-// Initialize OpenAI client
-const openaiClient = new OpenAI({
-  apiKey: config.OPENAI_API_KEY,
-});
+// Initialize Gemini client
+const geminiClient = new GoogleGenAI({ apiKey: config.GEN_API_KEY });
 
-export const OPENAI_MODEL = 'gpt-4o';
+export const GEMINI_MODEL = 'gemini-2.5-flash';
 
-export default openaiClient;
+export default geminiClient;
